@@ -5,6 +5,7 @@
 #include "readingSerial.h"
 #include "convert.h"
 
+#define IR_noDetectV 0b1111111111
 
 class IR_read
 {
@@ -13,6 +14,7 @@ private:
 public:
     int deg;
     int dis;
+    bool detected;
 };
 
 

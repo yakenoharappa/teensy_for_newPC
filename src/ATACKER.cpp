@@ -37,25 +37,18 @@ void ATACKER_loop()
 
     if (digitalRead(TOGGLE_PIN) == true)
     {
-/*         if (first_move == 0)
-        {
-            while (LineNeed == false)
-            {
-                motorsMove(0, MotorSpeed);
-            }
-        }
-        else
-        {
-            motors_Update();
-        } */
         motors_Update();
+        Screen_Update();
         //first_move = 1;
     }
     else
     {
         motorsStop();
+        Screen_Update();
+        //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！
     }
     
-    Screen_Update();
+    
+    
     
 }

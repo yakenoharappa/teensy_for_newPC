@@ -82,3 +82,4 @@ extern int MotorSpeed;
 
 void Screen_setup();
 void Screen_Update();
+void ClearScreen();

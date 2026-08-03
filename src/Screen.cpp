@@ -281,8 +281,14 @@ int dosu(int value){
     return value;
 }
 
+void ClearScreen()
+{
+    display.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, BLACK);
+    //display.clearDisplay();
+}
 
-void Screen_Update(){
+void Screen_Update()
+{
     BNOdeg.degf = yaw_BNO;
     MIXdeg.degf = deg_data;
     LSMdeg.degf = theta;
@@ -649,7 +655,7 @@ void Screen_Update(){
         display.setCursor(0, 20);
         display.print("IRdeg=");
 
-        if (IRv.deg != 0b1111111111)
+        if ( IRv.detected == true )
         {
             display.println(IRv.deg);
         }

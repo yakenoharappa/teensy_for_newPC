@@ -45,8 +45,8 @@ void LineRead_update()
         {
             Angel.number_of_detect++;
             LineNeed = true;
-            Angel.sumX +=  sin(deg_radian(Angel.degs[i] - deg_data));
-            Angel.sumY +=  cos(deg_radian(Angel.degs[i] - deg_data));
+            Angel.sumX +=  cos(deg_radian(Angel.degs[i] - deg_data));
+            Angel.sumY +=  sin(deg_radian(Angel.degs[i] - deg_data));
             Angel.Linedegr = deg_radian(Angel.degs[i]);
         }
     }

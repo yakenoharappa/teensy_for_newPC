@@ -163,15 +163,14 @@ void motors_Update()
 
     if (LineNeed == true)
     {
-        realmoveX = sin(LineMoveDegd);
-        realmoveY = cos(LineMoveDegd);
+        realmoveX = cos(LineMoveDegd);
+        realmoveY = sin(LineMoveDegd);
     }
 
-
-    if ( IRv.deg != 0b1111111111 )
+    if ( IRv.detected == true )
     {
-        realmoveX += sin(moveDeg) + sin(LineMoveDegd);
-        realmoveY += cos(moveDeg) + cos(LineMoveDegd);
+        realmoveX += cos(moveDeg) + cos(LineMoveDegd);
+        realmoveY += sin(moveDeg) + sin(LineMoveDegd);
     }
 
     realmovedegd = radian_deg(atan2(realmoveY, realmoveX)); 
