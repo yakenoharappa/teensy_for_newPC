@@ -55,10 +55,10 @@ int DegRangeChange(int before, int which){
 }
 
 
-//8bit→16bit(Serial関係)
-int BitChange(uint8_t v1, uint8_t v2)    
+//8bit→16bit(Serial関係)__v1=LOWB,v2=HIGHB
+uint16_t BitChange(uint8_t v1, uint8_t v2)
 {
-    v2 = v2  << 8; 
-    int v3 = v1 | v2;
+    //v2 = v2  << 8; 
+    uint16_t v3 = v1 | (v2 << 8);
     return v3;
 }

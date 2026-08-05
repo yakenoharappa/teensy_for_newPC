@@ -15,4 +15,4 @@ int changedeg(int value, int change_range);
 int DegRangeChange(int before, int which);
 
 //8bit→16bit(Serial関係)
-int BitChange(uint8_t v1, uint8_t v2);
+uint16_t BitChange(uint8_t v1, uint8_t v2);

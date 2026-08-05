@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "Gyro/Gyro.h"
 
 class PID
 {

@@ -28,13 +28,19 @@ void ATACKER_loop()
     Serial.print("IRV=");
     Serial.println(IRv.deg);
     move_loop();
-    LineMove_loop();
+    
     Serial.print("Linedatas:");
     Serial.print(Linedata.values[0], 2);
     Serial.print(", ");
     Serial.print(Linedata.values[1], 2);
     //Serial.print(", ");
-
+    LineMove_loop();
+/*     while (Serial2.available())
+    {
+        Serial.print("LINEDATA=");
+        Serial.println(Serial2.read(), 2);
+    } */
+    
     if (digitalRead(TOGGLE_PIN) == true)
     {
         motors_Update();
@@ -45,10 +51,8 @@ void ATACKER_loop()
     {
         motorsStop();
         Screen_Update();
-        //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！
+        //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
     }
-    
-    
-    
+    //delay(100);
     
 }

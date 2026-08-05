@@ -12,10 +12,10 @@ readingSerial::readingSerial(int number, uint8_t StartC, uint8_t endC, int amoun
 
 void readingSerial::readData()
 {
-    while (Serials[SerialNumber]->available() >= amountData + 2 )
+    while (Serials[SerialNumber]->available() >= (amountData + 2) )
     {
         //Serial.println("IN1Loop");
-        while ( Serials[SerialNumber]->available() >= readingSerial::amountData * 2  &&  Serials[SerialNumber]->peek() != readingSerial::Start )
+        while ( Serials[SerialNumber]->available() >= (readingSerial::amountData + 2) * 2  &&  Serials[SerialNumber]->peek() != readingSerial::Start )
         {
             //Serial.println("in2loop");
             Serials[SerialNumber]->read();

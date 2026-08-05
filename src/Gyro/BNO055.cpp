@@ -3,7 +3,7 @@
 
 //#define DEBUG
 
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire); //I2Cのアドレス定義
+Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire); //I2Cのアドレス定義（青BNO⇒0x29, 緑BNO⇒0x28）
 
 static float Reset = 0;
 float new_yaw = 0;

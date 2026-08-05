@@ -17,6 +17,7 @@
 //#include "Jyunya.h"
 //#include "readController.h"
 #include "Kicker.h"
+#include "Camera.h"
 
 #include "Gyro/Gyro.h"
 

@@ -180,10 +180,10 @@ void motorsPdMove()
     float pd_output = _pd->output();
     pd_output = constrain(pd_output, -PD_MAX, PD_MAX);
 
-    int output1 = (int)roundf(pd_output * float(_pd_sign[0]))*0.0f;
-    int output2 = (int)roundf(pd_output * float(_pd_sign[1]))*0.0f;
-    int output3 = (int)roundf(pd_output * float(_pd_sign[2]))*0.0f;
-    int output4 = (int)roundf(pd_output * float(_pd_sign[3]));
+    int output1 = (int)roundf(pd_output * float(_pd_sign[0])*1.3);
+    int output2 = (int)roundf(pd_output * float(_pd_sign[1])*1.3);
+    int output3 = (int)roundf(pd_output * float(_pd_sign[2])*1.3);
+    int output4 = (int)roundf(pd_output * float(_pd_sign[3])*1.3);
 
     // 制御
     _dsr.move(output1, output2, output3, output4);

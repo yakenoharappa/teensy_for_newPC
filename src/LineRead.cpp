@@ -6,6 +6,19 @@
 bool LineNeed = 0;
 const float Linedegs[] = {5.625 *2, 5.625*6, 5.625*10 , 5.625*14, 5.625*18, 5.625*22, 5.625*26, 5.625*30, 5.625*34, 5.625*38, 5.625*42, 5.625*46, 5.625*50, 5.625*54, 5.625*58, 5.625*62};
 
+//for Making Blocks
+int amount_LineBlock = 0;
+int last_amount_LineBlock = 0;
+int BlockStart = 20;
+int BlockEnd = 20;
+int LineBlocks_START[8] = {0};
+int LineBlocks_END[8] = {0};
+float LineBlocks_DEG[8] = {0};
+float LineBlocks_cos[8] = {0};
+float LineBlocks_sin[8] = {0};
+
+int amount_no_BlockLine = 0;
+int no_BlockLine[16] = {0};
 
 bool SideLineV[3] = {0}; 
 Line Angel(16); 
@@ -23,6 +36,62 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
 }
 
 
+void MakingBlock()
+{
+    amount_no_BlockLine = 0;
+    amount_LineBlock = 0;
+    BlockStart = 20;
+    BlockEnd = 20;
+    for (int  i = 0; i < (Angel.HowManyLine); i++)
+    {
+        if ( i < (Angel.HowManyLine-1) && Angel.Detect[i] == true && Angel.Detect[i+1] == true)
+        {
+            if (i > 0 && Angel.Detect[i] == true && Angel.Detect[i-1] == false)
+            {
+                BlockStart = i;
+                
+                amount_LineBlock++;
+            }
+            else if (i == 0 && Angel.Detect[0] == true && Angel.Detect[15] == false)
+            {
+                BlockStart = i;
+                amount_LineBlock++;
+            }
+
+            BlockEnd = (i+1)%16;
+        }
+        else if (i == (Angel.HowManyLine-1) && Angel.Detect[i] == true && Angel.Detect[0] == true)
+        {
+            if (i > 0 && Angel.Detect[i] == true && Angel.Detect[i-1] == false)
+            {
+                BlockStart = i;
+                
+                amount_LineBlock++;
+            }
+            BlockEnd = (i+1)%16;
+        }
+        else
+        {
+            no_BlockLine[amount_no_BlockLine] = i;
+            Angel.sumX += Angel.Detect[i] * cos(deg_radian(Angel.degs[i] - deg_data));
+            Angel.sumY += Angel.Detect[i] * sin(deg_radian(Angel.degs[i] - deg_data));
+            amount_no_BlockLine++;
+        }
+
+        if (amount_LineBlock > 0)
+        {
+            LineBlocks_START[amount_LineBlock - 1] = (BlockStart);
+            LineBlocks_END[amount_LineBlock - 1] = (BlockEnd);
+        }
+        else
+        {
+            LineBlocks_START[0] = BlockStart;
+            LineBlocks_END[0] = BlockEnd;
+        }
+
+        last_amount_LineBlock = amount_LineBlock;
+    }
+}
 
 
 void LineRead_Setup()
@@ -45,11 +114,38 @@ void LineRead_update()
         {
             Angel.number_of_detect++;
             LineNeed = true;
-            Angel.sumX +=  cos(deg_radian(Angel.degs[i] - deg_data));
-            Angel.sumY +=  sin(deg_radian(Angel.degs[i] - deg_data));
+            //Angel.sumX +=  cos(deg_radian(Angel.degs[i] - deg_data));
+            //Angel.sumY +=  sin(deg_radian(Angel.degs[i] - deg_data));
             Angel.Linedegr = deg_radian(Angel.degs[i]);
         }
     }
+
+    MakingBlock();
+    int hairetsu[8] = {0};
+    
+    for (int i = 0; i < amount_LineBlock; i++)
+    {
+        if (LineBlocks_END[i] < LineBlocks_START[i])
+        {
+            hairetsu[i] = ((15 - LineBlocks_START[i]) + LineBlocks_END[i] + 1)%16;
+        }
+        else
+        {
+            hairetsu[i] = abs(LineBlocks_END[i] - LineBlocks_START[i] + 1)%16;
+        }
+        LineBlocks_DEG[i] = 0;
+        LineBlocks_sin[i] = 0;
+        LineBlocks_cos[i] = 0;
+        for (int j = 0; j < hairetsu[i] ; j++)
+        {
+            LineBlocks_cos[i] += (cos(deg_radian(Angel.degs[(LineBlocks_START[i] + j)%16] - deg_data)) / hairetsu[i]);
+            LineBlocks_sin[i] += (sin(deg_radian(Angel.degs[(LineBlocks_START[i] + j)%16] - deg_data)) / hairetsu[i]);
+            LineBlocks_DEG[i] += DegRangeChange(Angel.degs[(LineBlocks_START[i] + j)%16], -180) / hairetsu[i];
+        }
+        Angel.sumX += LineBlocks_cos[i];
+        Angel.sumY += LineBlocks_sin[i];
+    }
+
     float AngelAtan = atan2(Angel.sumY, Angel.sumX);
     
     for (int i = 0; i < 3; i++)
@@ -85,7 +181,6 @@ void LineRead_update()
         }
     }
     
-
 /* 
     for (int i = 0; i < Linedata.amountData; i++)
     {
@@ -94,6 +189,13 @@ void LineRead_update()
         Angel.sumY = Linedata.values[i] * sin((Angel.degs[i]) * PI / 180);
     } */
     //Angel.Linedegr = deg_radian(BitChange(Linedata.values[0], Linedata.values[1]));
+
+    //DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
+    
+    if ( abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - DegRangeChange(radian_deg(Angel.old_Linedegr[0]), 180)) > 120 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 1000 )
+    {
+        Angel.Linedegr = DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180);
+    }
 
     if (Angel.Linedegr != Angel.old_Linedegr[0])
     {
@@ -108,4 +210,3 @@ void LineRead_update()
         Angel.old_detect_times[0] = Angel.last_detect_time;
     }
 }
-

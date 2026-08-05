@@ -22,7 +22,7 @@ bool ContollerConnected = 1;
 
 
 //Motor.cpp
-int MotorSpeed = 20;
+int MotorSpeed = 60;
 
 //Timer.h ?
 float Timer = 999999;
@@ -663,7 +663,9 @@ void Screen_Update()
         {
             display.println("NoDetected");
         } 
-        
+
+        display.print("IRdis=");
+        display.println(IRv.dis);
         
         //display.println(IRv.deg);
 
@@ -763,7 +765,6 @@ void Screen_Update()
             display.println("NotDetected");
         }
         
-        
 
         //円を描く
         //writeCircle(Line_en_offset, 0, Line_r);
@@ -847,12 +848,14 @@ void Screen_Update()
             }
             
         }
-        else{
+        else
+        {
             if (KickerOnOff == true)
             {
                 display.println("   Kicker <ON>");
             }
-            else{
+            else
+            {
                 display.println("   Kicker <OFF>");
             }
             
@@ -876,11 +879,14 @@ void Screen_Update()
         display.println("ON!!!!");
         display.setCursor(15, 30);
         display.println("Please wait");
-        for (int i = senter_square(SCREEN_WIDTH - 10); i < SCREEN_WIDTH - senter_square(SCREEN_WIDTH - 10) ; i++){
+        Kick();
+        for (int i = senter_square(SCREEN_WIDTH - 10); i < SCREEN_WIDTH - senter_square(SCREEN_WIDTH - 10) ; i++)
+        {
             display.drawLine(senter_square(SCREEN_WIDTH - 10), 50, i, 50, WHITE);
             display.display();
             delay(1);
         }
+        Kicker_end();
         LeftRight = int(Menu_layout::Kicker);
         now = Status::Menu;
         
@@ -1177,6 +1183,7 @@ void Screen_Update()
         display.setFont(NULL);
         display.setCursor(0, 20);
         display.print("Goal:");
+
         if ( UpKey() == true )
         {
             SettingGoal = 1;
@@ -1189,12 +1196,15 @@ void Screen_Update()
 
         if ( SettingGoal == true )
         {
-            display.print("Yellow(1)");
+            display.println("Yellow(1)");
         }
         else
         {
-            display.print("Blue(0)");
+            display.println("Blue(0)");
         }
+        
+        display.print("Court_deg=");
+        display.println(CameraV.court_deg);
         
 
         if (Enter() == true)

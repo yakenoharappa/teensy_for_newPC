@@ -1,10 +1,58 @@
 #include "move.h"
 
+float moveDeg = 0;
+float ball_deg = 0;
+//float ball_dis = 0;
+void move_setup()
+{
+    Serial.begin(115200);
+
+}
+void move_loop()
+{
+    ball_deg = IRv.deg;
+
+    if(abs(ball_deg) < 5 )
+    {
+        moveDeg = ball_deg;
+    }
+    else if(ball_deg < 10)
+    {
+        moveDeg = ball_deg + 5;
+    }
+    else if(ball_deg < 20)
+    {
+        moveDeg = ball_deg + 10;
+    }
+    else if(ball_deg < 30)
+    {
+        moveDeg = ball_deg + 15;
+    }
+    else if(ball_deg < 40)
+    {
+        moveDeg = ball_deg + 20;
+    }
+    else if(ball_deg < 50)
+    {
+        moveDeg = ball_deg + 25;
+    }
+    else if(ball_deg < 60)
+    {
+        moveDeg = ball_deg + 30;
+    }
+    else if(ball_deg < 70)
+    {
+        moveDeg = ball_deg + 35;
+    }
+
+}
+/* #include "move.h"
+
 //============================
 // 回り込み半径
 //============================
 const int N = 9;
-const int r = 250.0f;
+const int r = 70.0f;
 float moveDeg = 0;
 
 float x[N] = {
@@ -20,7 +68,7 @@ float x[N] = {
 };
 
 float y[N] = {
-    135,
+    -180,
     -175,
     -130,
     -70,
@@ -28,20 +76,20 @@ float y[N] = {
     70,
     130,
     175,
-    -135
+    180
 };
 
 // 接線（あとで自由に変更）
 float m[N] = {
+    2.0,
+    1.5,
     1.0,
+    0.5,
+    0.0,
+    0.5,
     1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0
+    1.5,
+    2.0
 };
 
 //================================================
@@ -79,7 +127,7 @@ float spline(float input)
 //================================================
 float getMoveDeg(float ball_deg,float ball_dis)
 {
-    float ball_rad=radians(ball_deg);
+    float ball_rad = radians(ball_deg);
 
     if(ball_dis>=r)
     {
@@ -117,19 +165,19 @@ void move_loop()
 {
     // センサーから取得
     float ball_deg = IRv.deg;
-    float ball_dis = IRv.dis;
+    float ball_dis = 255 - IRv.dis;
 
 
     //==========================
     // フェーズ切り替え
     //==========================
 
-    if (abs(ball_deg) < 10.0 && ball_dis < r)
+    if (abs(ball_deg) < 10.0 )
     {
         // ボールを取りに行く
         moveDeg = ball_deg;
     }
-    else
+    else if(ball_dis > r)
     {
         // 回り込み
         moveDeg = getMoveDeg(ball_deg, ball_dis);
@@ -141,4 +189,5 @@ void move_loop()
     // motorsMove(moveDeg, 80);
 
     //delay(20);
-}
+} */
+
