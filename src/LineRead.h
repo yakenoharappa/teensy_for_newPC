@@ -45,3 +45,4 @@ extern readingSerial Linedata;
 
 extern bool SideLineV[3];
 extern bool LineNeed;
+extern bool first_detected;

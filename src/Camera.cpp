@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-readingSerial Camera(cameraSerial, 0x55, 0xFF, 14);
+readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
                                             //　↑この数には、STARTとENDは含まない
 
 CameraData CameraV;
@@ -10,8 +10,8 @@ void Camera_update()
 {
     Camera.readData();
     //Serial.print(Serial3.read());
-    Serial.print("VALUES");
-    Serial.println(Camera.values[10]);
+    //Serial.print("VALUES");
+    //Serial.println(Camera.values[10]);
     CameraV.court_deg = int16_t(BitChange(Camera.values[0], Camera.values[1]));
     CameraV.yellow_deg = int16_t(BitChange(Camera.values[2], Camera.values[3]));
     CameraV.yellow_dis = BitChange(Camera.values[4], Camera.values[5]);

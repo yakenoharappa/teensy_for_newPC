@@ -15,7 +15,7 @@ void readingSerial::readData()
     while (Serials[SerialNumber]->available() >= (amountData + 2) )
     {
         //Serial.println("IN1Loop");
-        while ( Serials[SerialNumber]->available() >= (readingSerial::amountData + 2) * 2  &&  Serials[SerialNumber]->peek() != readingSerial::Start )
+        while ( Serials[SerialNumber]->available() >= (readingSerial::amountData + 2) * 1  &&  Serials[SerialNumber]->peek() != readingSerial::Start )
         {
             //Serial.println("in2loop");
             Serials[SerialNumber]->read();
@@ -54,7 +54,12 @@ void readingSerial::readData()
                 dGood.five = dController.five;
                 dGood.six = dController.six;
                 dGood.fin = dController.fin; */
-                break;
+                
+                if (Serials[SerialNumber]->available() < (amountData + 2))
+                {
+                    break;
+                }
+                //
             }
         }
     }

@@ -22,7 +22,7 @@ bool ContollerConnected = 1;
 
 
 //Motor.cpp
-int MotorSpeed = 60;
+int MotorSpeed = 80;
 
 //Timer.h ?
 float Timer = 999999;
@@ -879,7 +879,10 @@ void Screen_Update()
         display.println("ON!!!!");
         display.setCursor(15, 30);
         display.println("Please wait");
+        Kicker_end();
+        delay(100);
         Kick();
+        //Kick();
         for (int i = senter_square(SCREEN_WIDTH - 10); i < SCREEN_WIDTH - senter_square(SCREEN_WIDTH - 10) ; i++)
         {
             display.drawLine(senter_square(SCREEN_WIDTH - 10), 50, i, 50, WHITE);
@@ -1205,6 +1208,14 @@ void Screen_Update()
         
         display.print("Court_deg=");
         display.println(CameraV.court_deg);
+        display.print("Yelllow_deg=");
+        display.println(CameraV.yellow_deg);
+        display.print("Yellow_dis=");
+        display.println(CameraV.yellow_dis);
+        display.print("Blue_deg=");
+        display.println(CameraV.blue_deg);
+        display.print("Blue_dis=");
+        display.println(CameraV.blue_dis);
         
 
         if (Enter() == true)

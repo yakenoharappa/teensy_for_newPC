@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "PINOUTs.h"
 #include "LineRead.h"
+#include "Kicker.h"
 int first_move = 0;
 
 
@@ -35,7 +36,12 @@ void ATACKER_loop()
     Serial.print(Linedata.values[1], 2);
     //Serial.print(", ");
     LineMove_loop();
-/*     while (Serial2.available())
+
+    Kicker_end();
+    
+    
+/* 
+    while (Serial2.available())
     {
         Serial.print("LINEDATA=");
         Serial.println(Serial2.read(), 2);
@@ -46,13 +52,13 @@ void ATACKER_loop()
         motors_Update();
         Screen_Update();
         //first_move = 1;
+        //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
     }
     else
     {
         motorsStop();
         Screen_Update();
-        //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        
     }
     //delay(100);
-    
 }

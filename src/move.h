@@ -4,6 +4,8 @@
 #include <math.h>
 
 #include "IR_read.h"
+#include "Screen.h"
+
 
 extern float moveDeg;
 

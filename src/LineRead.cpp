@@ -17,6 +17,10 @@ float LineBlocks_DEG[8] = {0};
 float LineBlocks_cos[8] = {0};
 float LineBlocks_sin[8] = {0};
 
+bool first_detected = 0;
+float first_deg = 0;
+int first_detected_time = 0;
+
 int amount_no_BlockLine = 0;
 int no_BlockLine[16] = {0};
 
@@ -179,6 +183,24 @@ void LineRead_update()
             }
             
         }
+
+        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 1000)
+        {
+            if (first_detected == false)
+            {
+                first_detected = true;
+                first_detected_time = millis();
+                first_deg = Angel.Linedegr;
+            }
+        }
+        else
+        {
+            first_detected = false;
+        }
+    }
+    else
+    {
+        first_detected = false;
     }
     
 /* 
@@ -191,11 +213,17 @@ void LineRead_update()
     //Angel.Linedegr = deg_radian(BitChange(Linedata.values[0], Linedata.values[1]));
 
     //DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
+
+    int reversed_check = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - DegRangeChange(radian_deg(Angel.old_Linedegr[0]), 180));
     
-    if ( abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - DegRangeChange(radian_deg(Angel.old_Linedegr[0]), 180)) > 120 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 1000 )
+    if ( (millis() - first_detected_time) < 300 && first_detected == false && (reversed_check < 75 || reversed_check > 135) )
     {
-        Angel.Linedegr = DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180);
+        Angel.Linedegr = first_deg;
     }
+    else if ( reversed_check > 120 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 1000 )
+    {
+        Angel.Linedegr = deg_radian(DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180));
+    }   
 
     if (Angel.Linedegr != Angel.old_Linedegr[0])
     {

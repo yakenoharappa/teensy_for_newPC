@@ -36,6 +36,7 @@ void LineMove_loop()
         LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
     } */
 
+    
     LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
     
     //LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);

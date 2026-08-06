@@ -14,7 +14,7 @@ void setup()
     Serial7.begin(115200);
 	//pinMode(GYRO_RESET, INPUT_PULLUP);
 	pinMode(LED1, OUTPUT);
-	pinMode(LED2, OUTPUT);
+	pinMode(LED4, OUTPUT);
 	pinMode(LED3, OUTPUT);
 	pinMode(LED4, OUTPUT);
 
@@ -32,8 +32,9 @@ void loop()
 {
   // put your main code here, to run repeatedly:
 	
-	digitalWrite(LED4, LOW);
-	digitalWrite(LED3, HIGH);
+	//digitalWrite(LED4, LOW);
+	//digitalWrite(LED3, HIGH);
+	
 	/* Teensyフラッシュメモリアクセス
   		https://www.pjrc.com/teensy/td_libs_EEPROM.html */
 	ATACKER_loop();

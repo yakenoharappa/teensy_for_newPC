@@ -36,7 +36,7 @@ void Kick()
         digitalWrite(FET1, LOW);
         LastKickedTime = millis();
         KickerCharge = 0;
-        digitalWrite(LED2, HIGH);
+        digitalWrite(LED4, HIGH);
         digitalWrite(LED1, LOW);
     }
     else if ( (millis() - LastKickedTime) <= CoolTime && (millis() - LastKickedTime) >= 300 )   //充電
@@ -44,7 +44,7 @@ void Kick()
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, HIGH);
         KickerCharge = 0;
-        digitalWrite(LED2, LOW);
+        digitalWrite(LED4, LOW);
         digitalWrite(LED1, LOW);
     }
     else if ( (millis() - LastKickedTime) >= CoolTime )      // >Cooltimeで、Kicker == 0    //充電完了！
@@ -52,17 +52,16 @@ void Kick()
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, LOW);
         KickerCharge = 1;
-        digitalWrite(LED2, LOW);
+        digitalWrite(LED4, LOW);
         digitalWrite(LED1, HIGH);
     }
     
-
 /* 
     if (digitalRead(FET2) == HIGH)
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, HIGH);
-        digitalWrite(LED2, LOW);
+        digitalWrite(LED4, LOW);
     } */
 }
 
@@ -72,14 +71,14 @@ void Kicker_end()
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, LOW);
-        digitalWrite(LED2, LOW);
+        digitalWrite(LED4, LOW);
         digitalWrite(LED1, HIGH);
     }
     else
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, HIGH);
-        digitalWrite(LED2, LOW);
+        digitalWrite(LED4, LOW);
         digitalWrite(LED1, LOW);
     }
 }
