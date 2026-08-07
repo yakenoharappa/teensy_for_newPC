@@ -3,9 +3,7 @@
 #define DEBUG
 
 //Camera.cppへ！！！
-bool SettingGoal = 0;
-bool Delection_Mode = 0;
-bool DEForATTA = 1;
+
 
 int back_lists[4] = {0};
 

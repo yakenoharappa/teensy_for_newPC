@@ -8,6 +8,7 @@ const int FET2 = 3;
 
 //Chatch_Sensor
 const int Catch_PIN = 30;
+
 /* 光変調フォトIC真理値
     - 光ON⇒LOW
     - 光OFF⇒HIGH

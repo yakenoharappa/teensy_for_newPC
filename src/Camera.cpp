@@ -1,5 +1,9 @@
 #include "Camera.h"
 
+bool SettingGoal = 0;
+bool Delection_Mode = 0;
+bool DEForATTA = 1;
+
 readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
                                             //　↑この数には、STARTとENDは含まない
 

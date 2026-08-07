@@ -24,3 +24,7 @@ extern CameraData CameraV;
 
 
 void Camera_update();
+
+extern bool SettingGoal;
+extern bool Delection_Mode;
+extern bool DEForATTA;

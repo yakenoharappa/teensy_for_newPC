@@ -30,15 +30,18 @@ void ATACKER_loop()
     Serial.println(IRv.deg);
     move_loop();
     
+/* 
     Serial.print("Linedatas:");
     Serial.print(Linedata.values[0], 2);
     Serial.print(", ");
-    Serial.print(Linedata.values[1], 2);
+    Serial.println(Linedata.values[1], 2); */
     //Serial.print(", ");
     LineMove_loop();
 
-    Kicker_end();
-    
+    Kicker();
+    //Kicker_end();
+    Serial.print("CATCH=");
+    Serial.println(digitalRead(Catch_PIN));
     
 /* 
     while (Serial2.available())

@@ -2,7 +2,7 @@
 
 unsigned long LastKickedTime = millis();
 bool KickerCharge = 0;
-const int CoolTime = 1000;
+const int CoolTime = 2500;
 
 
 
@@ -17,14 +17,14 @@ void Kicker_Setup()
 void Kicker()
 {
     //if ()    //要変更
-    if ( KickerOnOff == true && digitalRead(Catch_PIN) == 0 )
+    if ( KickerOnOff == true && digitalRead(Catch_PIN) == 1 )   //Kickerは、0で無反応、1で反応
     {
         Kick();
     }
     else if ( (millis() - LastKickedTime) >= 300 )
     {
         Kicker_end();
-    } 
+    }
 }
 
 
@@ -56,7 +56,7 @@ void Kick()
         digitalWrite(LED1, HIGH);
     }
     
-/* 
+    /* 
     if (digitalRead(FET2) == HIGH)
     {
         digitalWrite(FET2, LOW);
