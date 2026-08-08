@@ -38,7 +38,8 @@ void ATACKER_loop()
     //Serial.print(", ");
     LineMove_loop();
 
-    Kicker();
+    //Kicker();
+    
     //Kicker_end();
     Serial.print("CATCH=");
     Serial.println(digitalRead(Catch_PIN));

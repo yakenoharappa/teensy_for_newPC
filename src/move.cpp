@@ -3,6 +3,8 @@
 float moveDeg = 0;
 float ball_deg = 0;
 //float ball_dis = 0;
+int GoalDis = 0;
+int GoalDeg = 0;
 void move_setup()
 {
     //Serial.begin(115200);
@@ -12,17 +14,30 @@ void move_setup()
 void move_loop()
 {
     ball_deg = IRv.deg;
-    MotorSpeed = 80;
+    if (SettingGoal == 1)
+    {
+        GoalDis = CameraV.yellow_dis;
+        GoalDeg = CameraV.yellow_deg;
+    }
+    else
+    {
+        GoalDis = CameraV.blue_dis;
+        GoalDeg = CameraV.blue_deg;
+    }
+    
+    //MotorSpeed = 80;
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
     }
 
-
-
-    if(IRv.dis > 90)
+if(IRv.dis > 90)
     {
-        if(abs(ball_deg) < 8 )
+        if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 50 && ball_deg * GoalDeg >= 0) 
+        {
+            moveDeg = ball_deg;
+        }
+        else if(abs(ball_deg) < 8 )
         {
             moveDeg = ball_deg;
         }
@@ -31,7 +46,7 @@ void move_loop()
         if(ball_deg < 20)
         {
             moveDeg = ball_deg + 10;
-            MotorSpeed = 60;
+            //MotorSpeed = 60;
         }
         else if(ball_deg < 30)
         {
@@ -103,7 +118,7 @@ void move_loop()
         if(ball_deg > -20)
         {
             moveDeg = ball_deg - 10;
-            MotorSpeed = 60;
+            //MotorSpeed = 60;
         }
         else if(ball_deg > -30)
         {
@@ -185,6 +200,10 @@ void move_loop()
     {
         moveDeg = ball_deg;
     }
+        
+
+
+    
 }
 /* #include "move.h"
 

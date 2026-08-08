@@ -20,7 +20,7 @@ bool ContollerConnected = 1;
 
 
 //Motor.cpp
-int MotorSpeed = 80;
+int MotorSpeed = 70;
 
 //Timer.h ?
 float Timer = 999999;
