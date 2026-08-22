@@ -45,7 +45,7 @@ extern bool KickerOnOff;
 #define FONT_HEIGHT 8
 
 extern Adafruit_SSD1306 display;
-enum class Status { Menu, Gyro, IR, Line, Kicker, ONKicker, Runnning, Controller, Speed, UltraSonic, Timer, TimeSelect,  Image, Camera, Mode};
+enum class Status { Menu, Gyro, IR, Line, Kicker, ONKicker, Runnning, Controller, Speed, UltraSonic, Timer, TimeSelect,  Image, Camera, Mode, IR_DEBUG};
 enum class Menu_layout { Mode, Sensor, Camera, Speed, Kicker, Image };
 enum class Sensor_layout { Gyro, IR, Line, Kicker, UltraSonic };
 

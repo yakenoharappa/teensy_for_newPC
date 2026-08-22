@@ -20,7 +20,7 @@ bool ContollerConnected = 1;
 
 
 //Motor.cpp
-int MotorSpeed = 70;
+int MotorSpeed = 75;
 
 //Timer.h ?
 float Timer = 999999;
@@ -32,8 +32,7 @@ int TrySetup = 0; // 型（int）を忘れずに
 
 int Menu_y = 0;
 
-int HowManyLine = 16;
-int Line_en_offset = 20;
+
 
 bool bectol = 1;
 int Sita = 0;
@@ -43,9 +42,11 @@ int senga_Y2 = sin(radian);
 int senga_X2 = cos(radian);
 
 
-int Line_r = 30;
-int LineSize = 6;
+#define Line_r 30
+#define LineSize 6
+#define Line_en_offset 20
 bool Line[16] = {0};
+int HowManyLine = 16;
 //Screen_Gyro deg_data;
 
 
@@ -655,7 +656,7 @@ void Screen_Update()
 
         if ( IRv.detected == true )
         {
-            display.println(IRv.deg);
+            display.print(IRv.deg);
         }
         else
         {
@@ -664,6 +665,42 @@ void Screen_Update()
 
         display.print("IRdis=");
         display.println(IRv.dis);
+
+        //display.println("IR_DEBUGGER");
+        
+
+
+        LeftRight = yakusu(LeftRight, 2);
+        display.drawRect(8, 16 + ( 12 * (LeftRight+24)), SCREEN_WIDTH -16, FONT_HEIGHT + 3, WHITE);
+        //display.drawRect(8, 16 + ( 12 * (LeftRight)), SCREEN_WIDTH -16, FONT_HEIGHT + 3, WHITE);
+        if (Enter() == true)
+        {
+            if (LeftRight == 0)
+            {
+                now = Status::IR_DEBUG;
+            }
+            else if (LeftRight == 1)
+            {
+                now = Status::Menu;
+                LeftRight = int(Sensor_layout::IR);
+            }
+        }
+
+
+        display.setCursor(0, 18);
+        //display.print("  Delection:");
+
+
+        display.setCursor(0, 18 + 24);
+        display.println("IR_DEBUGGER");
+
+        display.setCursor(0, 18 + 12 * 3);
+        display.print("     >");
+
+
+        display.setCursor(0, 18 + 12 * 3);
+        //display.print("     >");
+
         
         //display.println(IRv.deg);
 
@@ -798,6 +835,36 @@ void Screen_Update()
                 writefillCircle(Line_en_offset+ (Linedeg.cosm() * (Line_r * 0.8)), Linedeg.sinm() * (Line_r * 0.8), 3);
             }
         }
+
+
+        if (Angel.Left == true)
+        {
+            display.fillRect(Line_en_offset + (Line_r) , SCREEN_HEIGHT/2-5, 5, 10, WHITE);
+        }
+        else
+        {
+            display.drawRect(Line_en_offset + (Line_r) , SCREEN_HEIGHT/2-5, 5, 10, WHITE);
+        }
+
+        if (Angel.Right == true)
+        {
+            display.fillRect(SCREEN_WIDTH/2+Line_en_offset + (Line_r) , SCREEN_HEIGHT/2-5, 5, 10, WHITE);
+        }
+        else
+        {
+            display.drawRect(SCREEN_WIDTH/2+Line_en_offset + (Line_r) , SCREEN_HEIGHT/2-5, 5, 10, WHITE);
+        } 
+
+        if (Angel.Back == true)
+        {
+            display.fillRect(Line_en_offset + SCREEN_WIDTH/2 - 5, SCREEN_HEIGHT/2 + (Line_r/2)+10+2, 10, 5, WHITE);
+        }
+        else
+        {
+            display.drawRect(Line_en_offset + SCREEN_WIDTH/2 - 5, SCREEN_HEIGHT/2 + (Line_r/2)+10+2, 10, 5, WHITE);
+        }
+
+        
 
         if ( Enter() == true )
         {
@@ -1183,29 +1250,7 @@ void Screen_Update()
         display.print("Camera");
         display.setFont(NULL);
         display.setCursor(0, 20);
-        display.print("Goal:");
 
-        if ( UpKey() == true )
-        {
-            SettingGoal = 1;
-        }
-
-        if (DownKey() == true)
-        {
-            SettingGoal = 0;
-        }
-
-        if ( SettingGoal == true )
-        {
-            display.println("Yellow(1)");
-        }
-        else
-        {
-            display.println("Blue(0)");
-        }
-        
-        display.print("Court_deg=");
-        display.println(CameraV.court_deg);
         display.print("Yelllow_deg=");
         display.println(CameraV.yellow_deg);
         display.print("Yellow_dis=");
@@ -1306,6 +1351,11 @@ void Screen_Update()
 
         display.setCursor(0, 18 + 12 * 3);
         display.print("     >");
+
+        break;
+
+
+    case Status::IR_DEBUG:
 
         break;
     }

@@ -5,6 +5,7 @@
 
 #include "IR_read.h"
 #include "Screen.h"
+#include "Camera.h"
 
 
 extern float moveDeg;

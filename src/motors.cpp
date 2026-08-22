@@ -79,7 +79,15 @@ void motors_Update()
 {
 
     // この1行で、内部の現在の向きと目標値の計算がすべて更新されます
-    motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
+    if( CamGoalDetected == true )
+    {
+        motorsPidProcess(&headingPID, yaw_BNO, GoalDeg);
+    }
+    else
+    {
+        motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
+    }
+    
 
 /*     motorsPdMove();
        // motorsStop();

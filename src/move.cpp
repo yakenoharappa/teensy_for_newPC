@@ -3,8 +3,7 @@
 float moveDeg = 0;
 float ball_deg = 0;
 //float ball_dis = 0;
-int GoalDis = 0;
-int GoalDeg = 0;
+
 void move_setup()
 {
     //Serial.begin(115200);
@@ -13,17 +12,9 @@ void move_setup()
 
 void move_loop()
 {
+    
     ball_deg = IRv.deg;
-    if (SettingGoal == 1)
-    {
-        GoalDis = CameraV.yellow_dis;
-        GoalDeg = CameraV.yellow_deg;
-    }
-    else
-    {
-        GoalDis = CameraV.blue_dis;
-        GoalDeg = CameraV.blue_deg;
-    }
+
     
     //MotorSpeed = 80;
     if(ball_deg > 180)
@@ -31,13 +22,14 @@ void move_loop()
         ball_deg = ball_deg - 360;
     }
 
-if(IRv.dis > 90)
+    if(IRv.dis > 0 && CamBallDetected == true  &&  CameraV.orange_dis < 70)
     {
-        if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 50 && ball_deg * GoalDeg >= 0) 
+        ball_deg = CameraV.orange_deg;
+/*         if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 35 && ball_deg * GoalDeg >= 0) 
         {
             moveDeg = ball_deg;
-        }
-        else if(abs(ball_deg) < 8 )
+        } */
+        if(abs(ball_deg) < 8 )
         {
             moveDeg = ball_deg;
         }
@@ -54,15 +46,15 @@ if(IRv.dis > 90)
         }
         else if(ball_deg < 40)
         {
-            moveDeg = ball_deg + 25;
+            moveDeg = ball_deg + 30;
         }
         else if(ball_deg < 50)
         {
-            moveDeg = ball_deg + 30;
+            moveDeg = ball_deg + 40;
         }
         else if(ball_deg < 60)
         {
-            moveDeg = ball_deg + 40;
+            moveDeg = ball_deg + 50;
         }
         else if(ball_deg < 70)
         {
@@ -126,15 +118,15 @@ if(IRv.dis > 90)
         }
         else if(ball_deg > -40)
         {
-            moveDeg = ball_deg - 25;
+            moveDeg = ball_deg - 30;
         }
         else if(ball_deg > -50)
         {
-            moveDeg = ball_deg - 30;
+            moveDeg = ball_deg - 40;
         }
         else if(ball_deg > -60)
         {
-            moveDeg = ball_deg - 40;
+            moveDeg = ball_deg - 50;
         }
         else if(ball_deg > -70)
         {

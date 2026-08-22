@@ -16,6 +16,7 @@ void ATACKER_setup()
     Gyro_setup();
     move_setup();
     motors_Setup();
+    Kicker_Setup();
 }
 
 void ATACKER_loop()
@@ -64,5 +65,7 @@ void ATACKER_loop()
         Screen_Update();
         
     }
+
+    Kicker();
     //delay(100);
 }

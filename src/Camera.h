@@ -28,3 +28,9 @@ void Camera_update();
 extern bool SettingGoal;
 extern bool Delection_Mode;
 extern bool DEForATTA;
+extern bool CamBallDetected;
+
+extern int GoalDis;
+extern int GoalDeg;
+
+extern bool CamGoalDetected;

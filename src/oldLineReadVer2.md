@@ -4,7 +4,6 @@
 //bool Line[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 //bool Lineport[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 bool LineNeed = 0;
-bool Angel_Need = false;
 const float Linedegs[] = {5.625 *2, 5.625*6, 5.625*10 , 5.625*14, 5.625*18, 5.625*22, 5.625*26, 5.625*30, 5.625*34, 5.625*38, 5.625*42, 5.625*46, 5.625*50, 5.625*54, 5.625*58, 5.625*62};
 
 //for Making Blocks
@@ -19,14 +18,8 @@ float LineBlocks_cos[8] = {0};
 float LineBlocks_sin[8] = {0};
 
 bool first_detected = 0;
-uint last_first_detected_number = 0;
 float first_deg = 0;
-unsigned long first_detected_time = 0;
-
-//Lineトレース
-int trace_check = 0;
-bool Line_trace = false;
-unsigned long trace_time = 0;
+int first_detected_time = 0;
 
 int amount_no_BlockLine = 0;
 int no_BlockLine[16] = {0};
@@ -44,18 +37,6 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
         Line::degs[i] = Linedegs[i];
     } 
     Line::HowManyLine = amount;
-}
-
-void Line_trace_move()
-{
-    if ((millis() - trace_time) < 100 && GoalDis > 58 && abs(GoalDeg) < 8 )
-    {
-        LineNeed = false;
-    }
-    else
-    {
-        Line_trace = false;
-    }
 }
 
 
@@ -126,37 +107,10 @@ void LineRead_update()
 {
     Angel.sumX = 0;
     Angel.sumY = 0;
-    trace_check= 0;
-
     LineNeed = false;
-    Angel_Need = false;
-
-    //for Side Lines
-    for (int i = 0; i < 3; i++)
-    {
-        SideLineV[i] = false;
-    }
-    Angel.Left = false;
-    Angel.Right = false;
-    Angel.Back = false;
-
     Linedata.readData();
     Angel.number_of_detect = 0;
     
-    //SideLineRead
-    for (int i = 0; i < 3; i++)
-    {
-        SideLineV[i] = Linedata.values[2] >> i & 0b01;
-    }
-    Angel.Right = SideLineV[2];
-    Angel.Back = SideLineV[1];
-    Angel.Left = SideLineV[0];
-
-
-    if ( Angel.Left == true || Angel.Right == true || Angel.Back == true)
-    {
-        LineNeed = true;
-    }
     
     for (int i = 0; i < 16; i++)
     {
@@ -165,7 +119,6 @@ void LineRead_update()
         {
             Angel.number_of_detect++;
             LineNeed = true;
-            Angel_Need = true;
             //Angel.sumX +=  cos(deg_radian(Angel.degs[i] - deg_data));
             //Angel.sumY +=  sin(deg_radian(Angel.degs[i] - deg_data));
             Angel.Linedegr = deg_radian(Angel.degs[i]);
@@ -179,7 +132,7 @@ void LineRead_update()
     {
         if (LineBlocks_END[i] < LineBlocks_START[i])
         {
-            hairetsu[i] = ((16 - LineBlocks_START[i]) + LineBlocks_END[i] + 1)%16;
+            hairetsu[i] = ((15 - LineBlocks_START[i]) + LineBlocks_END[i] + 1)%16;
         }
         else
         {
@@ -200,25 +153,21 @@ void LineRead_update()
 
     float AngelAtan = atan2(Angel.sumY, Angel.sumX);
     
+    for (int i = 0; i < 3; i++)
+    {
+        SideLineV[i] = Linedata.values[2] >> i & 0b01;
+    }
+    Angel.Right = SideLineV[0];
+    Angel.Back = SideLineV[1];
+    Angel.Left = SideLineV[2];
 
 
     if (LineNeed == true)
     {
         Angel.last_detect_time = millis();
-        if ( (Angel.Left == true || Angel.Right == true || Angel.Back == true) && Line_trace == false && Angel.Detect == false)
+        if ( Angel.number_of_detect == 1 )
         {
-            if (Angel.Left == true)
-            {
-                Angel.Linedegr = deg_radian(-90 - deg_data);
-            }
-            else if (Angel.Right == true)
-            {
-                Angel.Linedegr = deg_radian(90 - deg_data);
-            }
-            else
-            {
-                Angel.Linedegr = deg_radian(180 - deg_data);
-            }
+            
         }
         else    // else if ( Angel.number_of_detect >= 2 )
         {
@@ -233,13 +182,13 @@ void LineRead_update()
             {
                 Angel.Linedegr = AngelAtan;
             }
+            
         }
 
-        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 1000) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 1000)
         {
             if (first_detected == false)
             {
-                last_first_detected_number = 0;
                 first_detected = true;
                 first_detected_time = millis();
                 first_deg = Angel.Linedegr;
@@ -247,57 +196,14 @@ void LineRead_update()
         }
         else    //つまり、<= 1000 のときは、firstDetectedでない。
         {
-             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             first_detected = false;
         }
-
-        ////-----------------------------------------------------------------------------
-        if ((Angel.last_detect_time - first_detected_time) > 1000)
-        {
-            for (int i = 0; i < Angel.HowManyLine; i++)
-            {
-                if (Angel.old_detect_times[i] > first_detected_time && Angel.last_detect_time > Angel.old_detect_times[i])
-                {
-                    trace_check++;
-                }
-            }
-        }
-        
-
-        if (trace_check > 0)
-        {
-            int all_same_check = 0;
-            for (int i = 0; i < trace_check; i++)
-            {
-                if ( abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i]), 180)) < 35 && abs(DegRangeChange(radian_deg(Angel.Linedegr), 180)) < 35 )
-                {
-                    all_same_check++;
-                    if (all_same_check == trace_check && GoalDis < 80 && Delection_Mode == true ) //----------------------------------------------------------------------------------------------
-                    {
-                        if (Line_trace == false)
-                        {
-                            trace_time = millis();
-                        }
-                        Line_trace = true;
-                    }
-                }
-                else
-                {
-                    Line_trace = false;
-                }
-            }
-        }
-        else
-        {
-            Line_trace = false;
-        }
-        //-------------------------------------------------------------------------------------------------------------
     }
     else
     {
         first_detected = false;
     }
-
+    
 /* 
     for (int i = 0; i < Linedata.amountData; i++)
     {
@@ -309,13 +215,13 @@ void LineRead_update()
 
     //DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
 
-    int reversed_check = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - DegRangeChange(radian_deg(Angel.old_Linedegr[last_first_detected_number]), 180));
+    int reversed_check = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - DegRangeChange(radian_deg(Angel.old_Linedegr[0]), 180));
     
-    if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 40 || reversed_check > 150) )
+    if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 45 || reversed_check > 150) )
     {
         Angel.Linedegr = first_deg;
     }
-    else if ( reversed_check > 120 && reversed_check < 270 && first_detected == false ) //reversed_check > 120 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 もと
+    else if ( reversed_check > 120 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
     {
         if (Delection_Mode == 1)
         {
@@ -325,11 +231,7 @@ void LineRead_update()
         {
             Angel.Linedegr = deg_radian(DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180));
         }
-    }
-    else if (Line_trace == true)
-    {
-        Line_trace_move();
-    }
+    }   
 
     if (Angel.Linedegr != Angel.old_Linedegr[0])
     {
@@ -341,16 +243,6 @@ void LineRead_update()
             Angel.old_detect_times[i] = Angel.old_detect_times[i-1];
         }
         Angel.old_Linedegr[0] = Angel.Linedegr;
-
-        if (first_detected == true)
-        {
-            last_first_detected_number = 0;
-        }
-        else
-        {
-            last_first_detected_number++;
-        }
-        
         Angel.old_detect_times[0] = Angel.last_detect_time;
     }
 }
