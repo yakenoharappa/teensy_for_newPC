@@ -799,6 +799,9 @@ void Screen_Update()
         {
             display.println("NotDetected");
         }
+
+        display.print("F=");
+        display.println(radian_deg(first_deg));
         
 
         //円を描く

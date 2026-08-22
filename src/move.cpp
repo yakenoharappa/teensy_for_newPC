@@ -4,9 +4,17 @@ float moveDeg = 0;
 float ball_deg = 0;
 //float ball_dis = 0;
 
+PID ballPID(0.8f, 0.0f, 0.05f, 0.2f);
+
 void move_setup()
 {
     //Serial.begin(115200);
+
+    ballPID.setDeadband(0.0f);
+
+    ballPID.useP(true);
+    ballPID.useD(true);
+
 }
 
 
@@ -16,37 +24,72 @@ void move_loop()
     ball_deg = IRv.deg;
 
     
-    //MotorSpeed = 80;
+    MotorSpeed = 75;
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
     }
 
-    if(IRv.dis > 0 && CamBallDetected == true  &&  CameraV.orange_dis < 70)
+    if(IRv.dis > 0 && CamBallDetected == true  &&  CameraV.orange_dis < 80)
     {
         ball_deg = CameraV.orange_deg;
 /*         if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 35 && ball_deg * GoalDeg >= 0) 
         {
             moveDeg = ball_deg;
         } */
-        if(abs(ball_deg) < 8 )
+        if(abs(ball_deg) < 10 )
         {
-            moveDeg = ball_deg;
+            //moveDeg = ball_deg;
+            ballPID.process(ball_deg, 0.0f, true);
+            moveDeg = ballPID.output();
         }
-        else if(ball_deg >= 8)
+        else if(ball_deg >= 10)
+        {
+/*             if(ball_deg < 30)
+            {
+                MotorSpeed = 50;
+            } */
+/*             if(CameraV.orange_dis < 35)
+            {
+                moveDeg = ball_deg + 60;
+            }
+            else
+            {
+                moveDeg = ball_deg + 45;
+            } */
+            moveDeg = ball_deg + 50;
+
+        }
+        else if(ball_deg <= -10)
+        {
+/*             if(ball_deg > -30)
+            {
+                MotorSpeed = 50;
+            } */
+/*             if(CameraV.orange_dis < 35)
+            {
+                moveDeg = ball_deg - 60;
+            }
+            else
+            {
+                moveDeg = ball_deg - 45;
+            } */
+            moveDeg = ball_deg -50;
+        }
+        /* else if(ball_deg >= 8)
         {
         if(ball_deg < 20)
         {
-            moveDeg = ball_deg + 10;
+            moveDeg = ball_deg + 5;
             //MotorSpeed = 60;
         }
         else if(ball_deg < 30)
         {
-            moveDeg = ball_deg + 20;
+            moveDeg = ball_deg + 10;
         }
         else if(ball_deg < 40)
         {
-            moveDeg = ball_deg + 30;
+            moveDeg = ball_deg + 15;
         }
         else if(ball_deg < 50)
         {
@@ -54,71 +97,71 @@ void move_loop()
         }
         else if(ball_deg < 60)
         {
-            moveDeg = ball_deg + 50;
+            moveDeg = ball_deg + 43;
         }
         else if(ball_deg < 70)
         {
-            moveDeg = ball_deg + 55;
+            moveDeg = ball_deg + 47;
         }
         else if(ball_deg < 80)
         {
-            moveDeg = ball_deg + 60;
+            moveDeg = ball_deg + 50;
         }
         else if(ball_deg < 90)
         {
-            moveDeg = ball_deg + 65;
+            moveDeg = ball_deg + 53;
         }
         else if(ball_deg < 100)
         {
-            moveDeg = ball_deg + 70;
+            moveDeg = ball_deg + 56;
         }
         else if(ball_deg < 110)
         {
-            moveDeg = ball_deg + 72;
+            moveDeg = ball_deg + 60;
         }
         else if(ball_deg < 120)
         {
-            moveDeg = ball_deg + 75;
+            moveDeg = ball_deg + 64;
         }
         else if(ball_deg < 130)
         {
-            moveDeg = ball_deg + 77;
+            moveDeg = ball_deg + 67;
         }
         else if(ball_deg < 140)
         {
-            moveDeg = ball_deg + 80;
+            moveDeg = ball_deg + 70;
         }
         else if(ball_deg < 150)
         {
-            moveDeg = ball_deg + 80;
+            moveDeg = ball_deg + 70;
         }
         else if(ball_deg < 160)
         {
-            moveDeg = ball_deg + 80;
+            moveDeg = ball_deg + 73;
         }
         else if(ball_deg < 170)
         {
-            moveDeg = ball_deg + 85;
+            moveDeg = ball_deg + 76;
         }
         else if(ball_deg <= 180)
         {
-            moveDeg = ball_deg + 90;
+            moveDeg = ball_deg + 80;
         }
         }
         else if(ball_deg <= -8)
         {
         if(ball_deg > -20)
         {
-            moveDeg = ball_deg - 10;
+            moveDeg = ball_deg - 5;
             //MotorSpeed = 60;
         }
         else if(ball_deg > -30)
         {
-            moveDeg = ball_deg - 20;
+            moveDeg = ball_deg - 10;
         }
         else if(ball_deg > -40)
         {
-            moveDeg = ball_deg - 30;
+            moveDeg = ball_deg - 15;
         }
         else if(ball_deg > -50)
         {
@@ -126,57 +169,57 @@ void move_loop()
         }
         else if(ball_deg > -60)
         {
-            moveDeg = ball_deg - 50;
+            moveDeg = ball_deg - 43;
         }
         else if(ball_deg > -70)
         {
-            moveDeg = ball_deg - 55;
+            moveDeg = ball_deg - 47;
         }
         else if(ball_deg > -80)
         {
-            moveDeg = ball_deg - 60;
+            moveDeg = ball_deg - 50;
         }
         else if(ball_deg > -90)
         {
-            moveDeg = ball_deg - 65;
+            moveDeg = ball_deg - 53;
         }
         else if(ball_deg > -100)
         {
-            moveDeg = ball_deg - 70;
+            moveDeg = ball_deg - 56;
         }
         else if(ball_deg > -110)
         {
-            moveDeg = ball_deg - 72;
+            moveDeg = ball_deg - 60;
         }
         else if(ball_deg > -120)
         {
-            moveDeg = ball_deg - 75;
+            moveDeg = ball_deg - 64;
         }
         else if(ball_deg > -130)
         {
-            moveDeg = ball_deg - 77;
+            moveDeg = ball_deg - 67;
         }
         else if(ball_deg > -140)
         {
-            moveDeg = ball_deg - 80;
+            moveDeg = ball_deg - 70;
         }
         else if(ball_deg > -150)
         {
-            moveDeg = ball_deg - 80;
+            moveDeg = ball_deg - 70;
         }
         else if(ball_deg > -160)
         {
-            moveDeg = ball_deg - 80;
+            moveDeg = ball_deg - 73;
         }
         else if(ball_deg > -170)
         {
-            moveDeg = ball_deg - 85;
+            moveDeg = ball_deg - 76;
         }
         else if(ball_deg >= -180)
         {
-            moveDeg = ball_deg - 90;
+            moveDeg = ball_deg - 80;
         }
-        }
+        } */
         
 
         if(moveDeg > 180)

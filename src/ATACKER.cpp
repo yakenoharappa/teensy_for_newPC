@@ -44,6 +44,13 @@ void ATACKER_loop()
     //Kicker_end();
     Serial.print("CATCH=");
     Serial.println(digitalRead(Catch_PIN));
+    Serial.print("SIDE");
+    Serial.print(Angel.Left);
+    Serial.print(", ");
+    Serial.print(Angel.Back);
+    Serial.print(", ");
+    Serial.print(Angel.Right);
+    Serial.println(", ");
     
 /* 
     while (Serial2.available())

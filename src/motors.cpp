@@ -79,9 +79,9 @@ void motors_Update()
 {
 
     // この1行で、内部の現在の向きと目標値の計算がすべて更新されます
-    if( CamGoalDetected == true )
+    if( CamGoalDetected == true && Delection_Mode == true )
     {
-        motorsPidProcess(&headingPID, yaw_BNO, GoalDeg);
+        motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
     }
     else
     {
@@ -152,10 +152,21 @@ void motors_Update()
     
     if (LineNeed == true)
     {
-        motorsMove(LineMoveDegd, MotorSpeed);
+        
+        float LineMove_X = cos(deg_radian(LineMoveDegd));
+        float LineMove_Y = sin(deg_radian(LineMoveDegd));
+
+        float moveDeg_X = cos(deg_radian(moveDeg));
+        float moveDeg_Y = sin(deg_radian(moveDeg));
+
+        float MOVE_Deg2 = atan2(LineMove_Y*1.1 + moveDeg_Y, LineMove_X*1.1 + moveDeg_X);
         if (IRv.detected == true)
         {
-            
+            motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+        }
+        else
+        {
+            motorsMove(LineMoveDegd, MotorSpeed);
         }
         
     }

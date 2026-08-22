@@ -92,7 +92,7 @@ void motorsMove(float deg, float power)
 
     float powers[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     for (int i = 0; i < 4; i++)
-        powers[i] = -sinf(radians(_deg_position[i] - yaw_BNO - deg)) * float(MotorSpeed * _move_sign[i]);
+        powers[i] = -sinf(radians(_deg_position[i] - deg)) * float(MotorSpeed * _move_sign[i]);
             for (int i = 0; i < 4; i++)
         powers[i] = powers[i] * motor_bias[i];
     // 最大出力を探す
