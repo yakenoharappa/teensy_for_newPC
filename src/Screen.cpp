@@ -118,6 +118,8 @@ void Back()
 {
     if ( digitalRead(BACK_BUTTON) == LOW && (millis() - LastTouched) > 300 )
     {
+        noTone(Buzzer_PIN);
+        tone(Buzzer_PIN, NOTE_C4, 100);
         LastTouched = millis();
         if ( back_lists[0] == int(Status::Controller) || back_lists[0] == int(Status::Menu) )
         {
@@ -175,11 +177,14 @@ void Back()
 bool Enter(){
     if ( digitalRead(ENTER_BUTTON) == LOW && (millis() - LastTouched) > 300 )
     {
+        noTone(Buzzer_PIN);
+        tone(Buzzer_PIN, NOTE_C4, 100);
         LastTouched = millis();
         Input_Back_List();
         return true;
     }
-    else{
+    else
+    {
         return false;
     }
     
@@ -188,6 +193,8 @@ bool Enter(){
 bool UpKey(){
     if ( digitalRead(UP_BUTTTON) == LOW && (millis() - LastTouched) > 300 )
     {
+        noTone(Buzzer_PIN);
+        tone(Buzzer_PIN, NOTE_C4, 100);
         LastTouched = millis();
         return true;
     }
@@ -201,6 +208,8 @@ bool UpKey(){
 bool DownKey(){
     if ( digitalRead(DOWN_BUTTON) == LOW && (millis() - LastTouched) > 300 )
     {
+        noTone(Buzzer_PIN);
+        tone(Buzzer_PIN, NOTE_C4, 100);
         LastTouched = millis();
         return true;
     }
@@ -794,6 +803,8 @@ void Screen_Update()
         {
             display.println(DegRangeChange(radian_deg(Angel.Linedegr) , -180));
             display.println(LineMoveDegd);
+            display.print("STATE");
+            display.println(Line_state);
         }
         else
         {
@@ -838,7 +849,6 @@ void Screen_Update()
                 writefillCircle(Line_en_offset+ (Linedeg.cosm() * (Line_r * 0.8)), Linedeg.sinm() * (Line_r * 0.8), 3);
             }
         }
-
 
         if (Angel.Left == true)
         {
@@ -1254,15 +1264,20 @@ void Screen_Update()
         display.setFont(NULL);
         display.setCursor(0, 20);
 
-        display.print("Yelllow_deg=");
-        display.println(CameraV.yellow_deg);
-        display.print("Yellow_dis=");
+        display.print("Yelllow=");
+        display.print(CameraV.yellow_deg);
+        display.print(", ");
         display.println(CameraV.yellow_dis);
-        display.print("Blue_deg=");
-        display.println(CameraV.blue_deg);
-        display.print("Blue_dis=");
+        display.print("Blue=");
+        display.print(CameraV.blue_deg);
+        display.print(", ");
         display.println(CameraV.blue_dis);
-        
+        display.print("Court_deg=");
+        display.println(CameraV.court_deg);
+        display.print("Oran_deg=");
+        display.print(CameraV.orange_deg);
+        display.print(", ");
+        display.println(CameraV.orange_dis);
 
         if (Enter() == true)
         {

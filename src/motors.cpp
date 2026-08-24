@@ -150,7 +150,7 @@ void motors_Update()
         //motorsMove(moveDeg, MotorSpeed);
     } */
     
-    if (LineNeed == true)
+    if (LineNeed == true && Line_trace == false)
     {
         
         float LineMove_X = cos(deg_radian(LineMoveDegd));
@@ -159,10 +159,20 @@ void motors_Update()
         float moveDeg_X = cos(deg_radian(moveDeg));
         float moveDeg_Y = sin(deg_radian(moveDeg));
 
-        float MOVE_Deg2 = atan2(LineMove_Y*1.1 + moveDeg_Y, LineMove_X*1.1 + moveDeg_X);
-        if (IRv.detected == true)
+        float MOVE_Deg2 = 0;
+        if (IRv.detected == true || CamBallDetected == true) //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         {
-            motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+        /* 
+            if (LineMove_X * moveDeg_X > 0)
+            {
+                MOVE_Deg2 = atan2(LineMove_Y + moveDeg_Y, LineMove_X + moveDeg_X);
+                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+            }
+            else
+            { */
+                MOVE_Deg2 = atan2(LineMove_Y * 1.1 + moveDeg_Y, LineMove_X * 1.1 + moveDeg_X);
+                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+            //}
         }
         else
         {

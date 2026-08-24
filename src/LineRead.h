@@ -40,10 +40,12 @@ public:
 extern Line Angel; 
 extern readingSerial Linedata;
 
-
+enum Line_States{NoDetected, SIDE, FRONTorBACK, CORNER};
+extern Line_States Line_state;
 
 
 extern bool SideLineV[3];
 extern bool LineNeed;
 extern bool first_detected;
 extern float first_deg;
+extern bool Line_trace;

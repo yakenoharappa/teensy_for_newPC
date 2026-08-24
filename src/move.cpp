@@ -43,7 +43,7 @@ void move_loop()
             ballPID.process(ball_deg, 0.0f, true);
             moveDeg = ballPID.output();
         }
-        else if(ball_deg >= 10)
+        else if(ball_deg >= 8)
         {
 /*             if(ball_deg < 30)
             {
@@ -57,10 +57,10 @@ void move_loop()
             {
                 moveDeg = ball_deg + 45;
             } */
-            moveDeg = ball_deg + 50;
+            moveDeg = ball_deg + 45;
 
         }
-        else if(ball_deg <= -10)
+        else if(ball_deg <= -8)
         {
 /*             if(ball_deg > -30)
             {
@@ -74,7 +74,7 @@ void move_loop()
             {
                 moveDeg = ball_deg - 45;
             } */
-            moveDeg = ball_deg -50;
+            moveDeg = ball_deg -45;
         }
         /* else if(ball_deg >= 8)
         {

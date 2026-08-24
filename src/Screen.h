@@ -25,7 +25,7 @@
 #include "LineRead.h"
 #include "LineMove.h"
 
-
+#include "common_music.h"
 #include "PINOUTs.h"
 //#include "Screen.h"
 #include "UltraSonic.h"
