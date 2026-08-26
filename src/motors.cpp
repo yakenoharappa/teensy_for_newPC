@@ -42,7 +42,7 @@ void motors_Setup()
     // シリアル
     Serial.begin(115200); // デバッグ用
 
-    digitalWrite(LED1, HIGH);
+    //digitalWrite(LED1, HIGH);
     //motorsInit(&Serial1, 115200);          // モーター初期化
 
 
@@ -140,7 +140,8 @@ void motors_Update()
         motorsMove(realmovedegd, MotorSpeed);
     }  */
 
-/*     if (IRv.deg == 0b1111111111)
+    /*
+    if (IRv.deg == 0b1111111111)
     {
         motorsPdMove();
     }
@@ -152,7 +153,6 @@ void motors_Update()
     
     if (LineNeed == true && Line_trace == false)
     {
-        
         float LineMove_X = cos(deg_radian(LineMoveDegd));
         float LineMove_Y = sin(deg_radian(LineMoveDegd));
 
@@ -160,25 +160,42 @@ void motors_Update()
         float moveDeg_Y = sin(deg_radian(moveDeg));
 
         float MOVE_Deg2 = 0;
+
+        //もどしたよ！！
         if (IRv.detected == true || CamBallDetected == true) //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         {
-        /* 
-            if (LineMove_X * moveDeg_X > 0)
+            if (Side_Need == true && Angel_Need == false)
             {
-                MOVE_Deg2 = atan2(LineMove_Y + moveDeg_Y, LineMove_X + moveDeg_X);
-                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                motorsMove(moveDeg, MotorSpeed * 0.5);
             }
             else
-            { */
+            { 
                 MOVE_Deg2 = atan2(LineMove_Y * 1.1 + moveDeg_Y, LineMove_X * 1.1 + moveDeg_X);
                 motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
-            //}
+            }
         }
         else
         {
             motorsMove(LineMoveDegd, MotorSpeed);
         }
         
+        if (Side_Need == true && Angel_Need == false)
+        {
+            digitalWrite(LED2, HIGH);
+            if (IRv.detected == true || CamBallDetected == true)
+            {
+                motorsMove(moveDeg, MotorSpeed * 0.6);
+            }
+            else
+            {
+                motorsStop();
+            }
+        }
+        else
+        {
+            digitalWrite(LED2, LOW);
+            motorsMove(LineMoveDegd, MotorSpeed);
+        }
     }
     else if (IRv.detected == true)
     {
@@ -199,5 +216,5 @@ void motors_Update()
     
     
 
-   // delay(10); // 制御周期安定化のためのウェイト */
+    // delay(10); // 制御周期安定化のためのウェイト */
 }

@@ -924,7 +924,6 @@ void Screen_Update()
                 KickerOnOff = true;
                 display.println("   Kicker <ON>");
             }
-            
         }
         else
         {
@@ -936,7 +935,6 @@ void Screen_Update()
             {
                 display.println("   Kicker <OFF>");
             }
-            
         }
 
         if (UpKey() == true)
@@ -958,13 +956,20 @@ void Screen_Update()
         display.setCursor(15, 30);
         display.println("Please wait");
         Kicker_end();
-        delay(100);
-        Kick();
+        //delay(100);
         //Kick();
-        for (int i = senter_square(SCREEN_WIDTH - 10); i < SCREEN_WIDTH - senter_square(SCREEN_WIDTH - 10) ; i++)
+        for (int i = senter_square(SCREEN_WIDTH - 10); i < SCREEN_WIDTH - senter_square(SCREEN_WIDTH - 10) ; i++)   //5-123
         {
             display.drawLine(senter_square(SCREEN_WIDTH - 10), 50, i, 50, WHITE);
             display.display();
+            if (i >= 45 && i <= 100)
+            {
+                Kick();
+            }
+            else
+            {
+                Kicker_end();
+            }
             delay(1);
         }
         Kicker_end();
@@ -1264,6 +1269,7 @@ void Screen_Update()
         display.setFont(NULL);
         display.setCursor(0, 20);
 
+        display.println("    [deg, dis]");
         display.print("Yelllow=");
         display.print(CameraV.yellow_deg);
         display.print(", ");

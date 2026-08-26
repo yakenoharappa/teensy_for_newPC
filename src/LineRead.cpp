@@ -24,7 +24,7 @@ Line_States Line_state = Line_States::NoDetected;
 
 bool first_detected = 0;
 float first_deg = 0;
-int first_detected_time = 0;
+unsigned long first_detected_time = 0;
 
 //Lineトレース
 int trace_check = 0;
@@ -52,6 +52,7 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
 
 void Line_trace_move()
 {
+    
     if ((millis() - trace_time) < 100 && GoalDis > 58 && abs(GoalDeg) < 8 )
     {
         Line_trace = true;
@@ -127,14 +128,16 @@ void LineRead_Setup()
     
 }
 
+
 void LineRead_update()
 {
     Angel.sumX = 0;
     Angel.sumY = 0;
-    trace_check= 0;
+    trace_check = 0;
 
     LineNeed = false;
     Angel_Need = false;
+    Side_Need = false;
     //for Side Lines
     for (int i = 0; i < 3; i++)
     {
@@ -143,12 +146,11 @@ void LineRead_update()
     Angel.Left = false;
     Angel.Right = false;
     Angel.Back = false;
-    Side_Need = Angel.Left || Angel.Right || Angel.Back;
-
+    
     Linedata.readData();
     Angel.number_of_detect = 0;
 
-    //SideLineRead
+    //SideLine_Read
     for (int i = 0; i < 3; i++)
     {
         SideLineV[i] = Linedata.values[2] >> i & 0b01;
@@ -156,6 +158,8 @@ void LineRead_update()
     Angel.Right = SideLineV[2];
     Angel.Back = SideLineV[1];
     Angel.Left = SideLineV[0];
+    Side_Need = Angel.Left || Angel.Right || Angel.Back;
+    //LineNeed = Side_Need;
     
     for (int i = 0; i < 16; i++)
     {
@@ -164,6 +168,7 @@ void LineRead_update()
         {
             Angel.number_of_detect++;
             LineNeed = true;
+            Angel_Need = true;
             //Angel.sumX +=  cos(deg_radian(Angel.degs[i] - deg_data));
             //Angel.sumY +=  sin(deg_radian(Angel.degs[i] - deg_data));
             Angel.Linedegr = deg_radian(Angel.degs[i]);
@@ -230,7 +235,7 @@ void LineRead_update()
             }
         }
 
-        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 375 || (abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 45 || abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 270) )
+        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 375 || abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 45 || ((abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 45 && abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 120) || abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 270) ) //かえたよ2026/08/24_21:30
         {
             if (first_detected == false)
             {
@@ -256,7 +261,7 @@ void LineRead_update()
             }
         }
         
-        if (trace_check > 2)
+        if (trace_check > 3)
         {
             int all_same_check = 0;
             for (int i = 0; i < trace_check; i++)
@@ -343,10 +348,14 @@ void LineRead_update()
 
     int reversed_check = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - radian_deg(first_deg));
     
-    if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 55 || reversed_check > 150) ) //もと45
+    if (Line_state == Line_States::CORNER)
     {
-        //Angel.Linedegr = first_deg;
-        Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
+        
+    }
+    else if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 55 || reversed_check > 150) ) //もと45
+    {
+        Angel.Linedegr = first_deg;
+        //Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
     }
     else if ( reversed_check > 120 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
     {
@@ -362,7 +371,12 @@ void LineRead_update()
     
     if (Line_trace == true)
     {
+        digitalWrite(LED1, HIGH);
         Line_trace_move();
+    }
+    else
+    {
+        digitalWrite(LED1, LOW);
     }
 
 
