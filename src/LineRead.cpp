@@ -52,8 +52,7 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
 
 void Line_trace_move()
 {
-    
-    if ((millis() - trace_time) < 100 && GoalDis > 58 && abs(GoalDeg) < 8 )
+    if ((millis() - trace_time) < 100 && GoalDis > 56 && abs(GoalDeg) < 8 )
     {
         Line_trace = true;
     }

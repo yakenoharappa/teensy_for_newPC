@@ -35,12 +35,12 @@
 } */
 
 // PIDの計算機実体を1つ作成
-PID headingPID(0.6f, 0.6f, 0.6f, 0.6f); 
+PID headingPID(0.6f, 0.0f, 0.6f, 0.6f); 
 
 void motors_Setup()
 {
     // シリアル
-    Serial.begin(115200); // デバッグ用
+    //Serial.begin(115200); // デバッグ用
 
     //digitalWrite(LED1, HIGH);
     //motorsInit(&Serial1, 115200);          // モーター初期化
@@ -73,11 +73,11 @@ void motors_Setup()
         motorsStop();
         delay(100);
     }
+    headingPID.useI(false);
 }
 
 void motors_Update()
 {
-
     // この1行で、内部の現在の向きと目標値の計算がすべて更新されます
     if( CamGoalDetected == true && Delection_Mode == true )
     {
@@ -162,6 +162,7 @@ void motors_Update()
         float MOVE_Deg2 = 0;
 
         //もどしたよ！！
+/* 
         if (IRv.detected == true || CamBallDetected == true) //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         {
             if (Side_Need == true && Angel_Need == false)
@@ -177,9 +178,22 @@ void motors_Update()
         else
         {
             motorsMove(LineMoveDegd, MotorSpeed);
-        }
+        } */
         
-        if (Side_Need == true && Angel_Need == false)
+        if (Angel_Need == true)
+        {
+            digitalWrite(LED2, LOW);
+            if (IRv.detected == true || CamBallDetected == true)
+            {
+                MOVE_Deg2 = atan2(LineMove_Y * 1.1 + moveDeg_Y, LineMove_X * 1.1 + moveDeg_X);
+                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+            }
+            else
+            {
+                motorsMove(LineMoveDegd, MotorSpeed);
+            }
+        }
+        else
         {
             digitalWrite(LED2, HIGH);
             if (IRv.detected == true || CamBallDetected == true)
@@ -191,15 +205,10 @@ void motors_Update()
                 motorsStop();
             }
         }
-        else
-        {
-            digitalWrite(LED2, LOW);
-            motorsMove(LineMoveDegd, MotorSpeed);
-        }
     }
     else if (IRv.detected == true)
     {
-        motorsMove(moveDeg, MotorSpeed);
+        motorsMove(moveDeg, MoveSpeed);
     }
     else
     {

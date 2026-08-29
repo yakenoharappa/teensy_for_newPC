@@ -21,6 +21,7 @@ bool ContollerConnected = 1;
 
 //Motor.cpp
 int MotorSpeed = 75;
+//int MotorSpeed = EEPROM.read(0);
 
 //Timer.h ?
 float Timer = 999999;
@@ -329,12 +330,6 @@ void Screen_Update()
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!謎Line線
     //display.drawLine(10, 13, SCREEN_WIDTH/3, 13, WHITE);
-    Serial.print("button:");
-    Serial.print(digitalRead(DOWN_BUTTON));   //下
-    Serial.print(", ");
-    Serial.print(digitalRead(ENTER_BUTTON));   //真ん中
-    Serial.print(", ");
-    Serial.println(digitalRead(UP_BUTTTON)); //上
 
 /*
     if ( digitalRead(UP_BUTTTON) == HIGH && (millis() - LastTouched) > 300 && LeftRight > 0 )
@@ -594,8 +589,7 @@ void Screen_Update()
         //display.drawLine(SCREEN_WIDTH/2 - 35, SCREEN_HEIGHT/2 , (SCREEN_WIDTH/2 + senga_X2 - 35), (SCREEN_HEIGHT/2 - senga_Y2), WHITE);
         //display.drawLine(10, 13, SCREEN_WIDTH/3, 13, WHITE);
 
-        Serial.print("LeftRight");
-        Serial.println(LeftRight);
+
         break;
 
 
@@ -714,8 +708,8 @@ void Screen_Update()
         //display.println(IRv.deg);
 
         //円を描く
-        writeCircle(Line_en_offset, 0, Line_r);
-        writeCircle(Line_en_offset, 0, 10);
+/*         writeCircle(Line_en_offset, 0, Line_r);
+        writeCircle(Line_en_offset, 0, 10); */
 
         //Line描画
         //display.drawRect(senter_square(10), SCREEN_HEIGHT/2 - 10/2 ,10, 10, WHITE);
@@ -805,6 +799,10 @@ void Screen_Update()
             display.println(LineMoveDegd);
             display.print("STATE");
             display.println(Line_state);
+            if (Angel_Need == true)
+            {
+                display.drawLine(Line_en_offset + SCREEN_WIDTH/2, SCREEN_HEIGHT/2, Line_en_offset + SCREEN_WIDTH/2 + sin(deg_radian(LineMoveDegd)) * 30, SCREEN_HEIGHT/2 + cos(deg_radian(LineMoveDegd)) * 30, WHITE);
+            }
         }
         else
         {
@@ -1143,6 +1141,11 @@ void Screen_Update()
         {
             LeftRight = int(Menu_layout::Speed);
             now = Status::Menu;
+/* 
+            if (EEPROM.read(0) != MotorSpeed)
+            {
+                EEPROM.write(0, MotorSpeed);
+            } */
         }
         break;
 

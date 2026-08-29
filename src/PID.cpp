@@ -9,7 +9,7 @@ PID::PID(float kp,float ki, float kd, float lpf_alpha)
 void PID::setGains(float kp, float ki, float kd)
 {
     _kp = kp;
-    //_ki = ki;
+    _ki = ki;
     _kd = kd;
 }
 
@@ -25,7 +25,7 @@ void PID::setDeadband(float band)
 
 void PID::useP(bool use) { _useP = use; }
 void PID::useD(bool use) { _useD = use; }
-//void PID::useI(bool use) { _useI = use; }
+void PID::useI(bool use) { _useI = use; }
 void PID::process(float val, float target, bool angle)
 {
     uint32_t now = micros();

@@ -8,6 +8,7 @@ bool CamBallDetected = 0;
 bool CamGoalDetected = 0;
 int GoalDis = 0;
 int GoalDeg = 0;
+bool distanceDevide = false;
 
 readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
                                             //　↑この数には、STARTとENDは含まない
@@ -29,6 +30,16 @@ void Camera_update()
     CameraV.orange_deg = int16_t(BitChange(Camera.values[10], Camera.values[11]));
     CameraV.orange_dis = BitChange(Camera.values[12], Camera.values[13]);
 
+
+    if(CameraV.orange_dis < 80)
+    {
+        distanceDevide = true;
+    }
+    else if(CameraV.orange_dis > 100)
+    {
+        distanceDevide = false;
+    }
+
     if (uint16_t(CameraV.orange_deg) == 0xFF)
     {
         CamBallDetected = false;
@@ -48,7 +59,7 @@ void Camera_update()
         GoalDis = CameraV.blue_dis;
         GoalDeg = CameraV.blue_deg;
     }
-
+    
     if (uint16_t(GoalDis) == 0xFF && uint16_t(GoalDeg) == 0xFF)
     {
         CamGoalDetected = false;
@@ -58,7 +69,6 @@ void Camera_update()
         CamGoalDetected = true;
     }
 }
-
 
 /* 
     START = 0x55

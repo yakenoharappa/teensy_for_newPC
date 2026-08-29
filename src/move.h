@@ -13,3 +13,5 @@ extern float moveDeg;
 
 void move_setup();
 void move_loop();
+
+extern int MoveSpeed;

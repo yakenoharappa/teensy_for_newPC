@@ -8,6 +8,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <fonts/FreeSerifBold9pt7b.h>
+#include <EEPROM.h>
+
 
 
 #include "PINOUTs.h"

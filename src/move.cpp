@@ -2,7 +2,13 @@
 
 float moveDeg = 0;
 float ball_deg = 0;
+float ball_dis_integral = 0;
+float dis_error = 0;
 //float ball_dis = 0;
+int last_ball_dis = 0;
+float i_limit_dis = 1.0f;
+int MoveSpeed = MotorSpeed;
+int ball_dis = 0;
 
 PID ballPID(0.8f, 0.0f, 0.05f, 0.2f);
 
@@ -20,17 +26,49 @@ void move_setup()
 
 void move_loop()
 {
-    
     ball_deg = IRv.deg;
+    if (CamBallDetected == true)
+    {
+        ball_dis = CameraV.orange_dis;
+    }
+    else
+    {
+        ball_dis = IRv.dis;
+    }
     
-    
-    MotorSpeed = 75;
+    //MotorSpeed = 75;
+    dis_error = (last_ball_dis - 40)*0.1;  //255, 0 / 2.15, -0.40
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
     }
 
-    if(IRv.dis > 0 && CamBallDetected == true  &&  CameraV.orange_dis < 80)
+    if (fabsf(dis_error) < 40) //_deadband仮
+    {
+        dis_error = 0.0f;
+    }
+
+    ball_dis_integral += dis_error * dt; // 誤差に時間をかけて積み上げる
+    // 積分が溜まりすぎると、目標を超えても止まらなくなるので制限をかける
+    ball_dis_integral = constrain(ball_dis_integral, -i_limit_dis, i_limit_dis);
+    Serial.print("lasdis");
+    Serial.print(last_ball_dis);
+    Serial.print("Error");
+    Serial.print(dis_error);
+    Serial.print(", INTE");
+    Serial.println(ball_dis_integral);
+    if (CameraV.orange_dis < 40)
+    {
+        ball_dis_integral = 0;
+        MoveSpeed = MotorSpeed;
+    }
+    else
+    {
+        MoveSpeed += ball_dis_integral;
+    }
+    
+    
+    if(IRv.dis > 0 && CamBallDetected == true  &&  distanceDevide == true)
     {
         ball_deg = CameraV.orange_deg;
         /* 
@@ -53,18 +91,23 @@ void move_loop()
         Serial.println("°");
         
 
-        if(abs(ball_deg) < 20 && x > -12 && x < 11)
+        if(abs(ball_deg) < 15)
         {
             //moveDeg = ball_deg;
             ballPID.process(ball_deg, 0.0f, true);
             moveDeg = ballPID.output();
+            if(abs(ball_deg) < 2.5)
+            {
+                moveDeg = 0;
+            }
         }
-        else if(ball_deg >= 20)
+
+        else if(ball_deg >= 15)
         {
             if(ball_deg < 30)
             {
-                MotorSpeed = 60;
                 moveDeg = ball_deg + 20;
+                //MotorSpeed = 70;
             } 
             else
             {
@@ -81,17 +124,18 @@ void move_loop()
             } */
             
         }
-        else if(ball_deg <= -20)
+        else if(ball_deg <= -15)
         {
             
             if(ball_deg > -30)
             {
-                MotorSpeed = 60;
                 moveDeg = ball_deg - 20;
+               // MotorSpeed = 70;
             } 
             else
             {
                 moveDeg = ball_deg - 45;
+                
             }
             /* 
             if(CameraV.orange_dis < 35)
@@ -264,6 +308,7 @@ void move_loop()
         moveDeg = ball_deg;
     }
     
+    last_ball_dis = ball_dis;
 }
 /* #include "move.h"
 

@@ -4,6 +4,7 @@
 float deg_data = 0;
 
 int usingGyro = 0;
+//#define Gyro_DEBUG
 #define BNO 0
 #define MIX 1
 #define LSM 2
@@ -63,12 +64,14 @@ void Gyro_update()
     }
         
 
-    Serial.print("BNO:");
-    Serial.print(yaw_BNO);
-    Serial.print(", LSM:");
-    Serial.print(theta);
-    Serial.print(", degdata:");
-    Serial.println(deg_data);
+    #ifdef Gyro_DEBUG
+        Serial.print("BNO:");
+        Serial.print(yaw_BNO);
+        Serial.print(", LSM:");
+        Serial.print(theta);
+        Serial.print(", degdata:");
+        Serial.println(deg_data);
+    #endif
     
     pastdeg = yaw_BNO;
 } 

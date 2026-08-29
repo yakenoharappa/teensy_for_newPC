@@ -8,5 +8,7 @@ const int LineSerial = 2;
 //const int ControllerSerial = 2;
 const int IRSerial = 7;
 
+//const int MOTORSerial5 = 5;
+
 const int cameraSerial = 3;
 

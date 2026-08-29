@@ -230,8 +230,9 @@ void BNO_update() {
         Serial1.write(0xAA); */
 
         //Serial.print(Reset);
+/* 
         Serial.print("角度:" );
-        Serial.println(yaw_BNO);
+        Serial.println(yaw_BNO); */
         /*
         Serial.print("value=");
         Serial.print(dacvalue);

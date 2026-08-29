@@ -8,7 +8,7 @@ void IR_loop()
 {
     IRdata.readData();
     IRv.deg = BitChange(IRdata.values[0], IRdata.values[1]);
-    IRv.dis = IRdata.values[2];
+    IRv.dis = (255 - IRdata.values[2]);
     if (IRv.deg == IR_noDetectV)
     {
         IRv.detected = false;

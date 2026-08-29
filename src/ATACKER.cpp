@@ -13,9 +13,13 @@ int first_move = 0;
 void ATACKER_setup()
 {
     Screen_setup();
+    display.println("Gyro_setup");
     Gyro_setup();
+    display.println("move_setup");
     move_setup();
+    display.println("motors_setup");
     motors_Setup();
+    display.println("Kicker_setup");
     Kicker_Setup();
 }
 
@@ -23,34 +27,22 @@ void ATACKER_loop()
 {
     Gyro_update();
     Camera_update();
-    //Serial.print("Camera");
-    //Serial.println(CameraV.orange_deg);
     
     IR_loop();
-    Serial.print("IRV=");
-    Serial.println(IRv.deg);
     move_loop();
     
-/* 
-    Serial.print("Linedatas:");
-    Serial.print(Linedata.values[0], 2);
-    Serial.print(", ");
-    Serial.println(Linedata.values[1], 2); */
-    //Serial.print(", ");
     LineMove_loop();
-
-    //Kicker();
     
-    //Kicker_end();
-    Serial.print("CATCH=");
-    Serial.println(digitalRead(Catch_PIN));
+    //Serial.print("CATCH=");
+    //Serial.println(digitalRead(Catch_PIN));
+/* 
     Serial.print("SIDE");
     Serial.print(Angel.Left);
     Serial.print(", ");
     Serial.print(Angel.Back);
     Serial.print(", ");
     Serial.print(Angel.Right);
-    Serial.println(", ");
+    Serial.println(", "); */
     
     /* 
     while (Serial2.available())
@@ -65,14 +57,15 @@ void ATACKER_loop()
         Screen_Update();
         //first_move = 1;
         //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        Kicker();
     }
     else
     {
         motorsStop();
         Screen_Update();
-        
+        Kicker_end();
     }
-
-    Kicker();
+    Serial.print("MoveSpeed=");
+    Serial.println(MoveSpeed);
     //delay(100);
 }
