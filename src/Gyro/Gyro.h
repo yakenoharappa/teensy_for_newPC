@@ -27,7 +27,7 @@ extern float pastdeg;
 
 
 extern bool LSM_STATUS;
-extern float dt;
+extern float dt_LSM;
 extern float theta;
 extern double gz_LSM;
 

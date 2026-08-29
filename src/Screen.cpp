@@ -659,7 +659,7 @@ void Screen_Update()
 
         if ( IRv.detected == true )
         {
-            display.print(IRv.deg);
+            display.println(IRv.deg);
         }
         else
         {
@@ -668,16 +668,19 @@ void Screen_Update()
 
         display.print("IRdis=");
         display.println(IRv.dis);
+        display.print("Cam_ball_dis=");
+        display.println(CameraV.orange_dis);
 
         //display.println("IR_DEBUGGER");
         
 
 
         LeftRight = yakusu(LeftRight, 2);
-        display.drawRect(8, 16 + ( 12 * (LeftRight+24)), SCREEN_WIDTH -16, FONT_HEIGHT + 3, WHITE);
+        display.drawRect(8, 16 + ( 12 * (LeftRight + 24)), SCREEN_WIDTH -16, FONT_HEIGHT + 3, WHITE);
         //display.drawRect(8, 16 + ( 12 * (LeftRight)), SCREEN_WIDTH -16, FONT_HEIGHT + 3, WHITE);
         if (Enter() == true)
         {
+            /* 
             if (LeftRight == 0)
             {
                 now = Status::IR_DEBUG;
@@ -686,7 +689,10 @@ void Screen_Update()
             {
                 now = Status::Menu;
                 LeftRight = int(Sensor_layout::IR);
-            }
+            } */
+            LastTouched = millis();
+            LeftRight = int(Menu_layout::Sensor);
+            now = Status::Menu;
         }
 
 
@@ -715,6 +721,7 @@ void Screen_Update()
         //display.drawRect(senter_square(10), SCREEN_HEIGHT/2 - 10/2 ,10, 10, WHITE);
         //display.drawRect(senter_square(10) + Line_r, SCREEN_HEIGHT/2 - 10/2 ,10, 10, WHITE);
 
+/* 
         if ( UpKey() == true )
         {
             LeftRight --;
@@ -769,7 +776,7 @@ void Screen_Update()
                 //display.fillRect(int(senter_square(LineSize) + Linedeg.cosm() * (Line_r * 0.8) + Line_en_offset), int (SCREEN_HEIGHT/2 - LineSize/2 - Linedeg.sinm() * (Line_r * 0.8)) ,LineSize, LineSize, WHITE);
                 writefillCircle(Line_en_offset+ (Linedeg.cosm() * (Line_r * 0.8)), Linedeg.sinm() * (Line_r * 0.8), 3);
             }
-        }
+        } */
 
         if ( Enter() == true)
         {
@@ -782,7 +789,7 @@ void Screen_Update()
 
     case Status::Line:
         //Menu名
-/* 
+        /* 
         display.setTextSize(2);
         display.setCursor(0, 0);
         display.println("Line"); */
@@ -1389,13 +1396,14 @@ void Screen_Update()
 
     //display.invertDisplay(true);
     display.display();
+/* 
     Serial.print("Back_lists:");
     for (int i = 0; i < 4; i++)
     {
         Serial.print(back_lists[i]);
         Serial.print(",");
     }
-    Serial.println(" ");
+    Serial.println(" "); */
 
     Back();
     //delay(20);

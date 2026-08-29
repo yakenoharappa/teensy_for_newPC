@@ -9,8 +9,10 @@ int last_ball_dis = 0;
 float i_limit_dis = 1.0f;
 int MoveSpeed = MotorSpeed;
 int ball_dis = 0;
+float dt_dis = 0;
+unsigned long dis_time = 0;
 
-PID ballPID(0.8f, 0.0f, 0.05f, 0.2f);
+PID ballPID(0.5f, 0.0f, 0.1f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
 
 void move_setup()
 {
@@ -37,34 +39,57 @@ void move_loop()
     }
     
     //MotorSpeed = 75;
-    dis_error = (last_ball_dis - 40)*0.1;  //255, 0 / 2.15, -0.40
+    dis_error = (last_ball_dis - 40) * 0.000001;  //255, 0 / 2.15, -0.40 //もともとは、- 40
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
     }
 
-    if (fabsf(dis_error) < 40) //_deadband仮
+    if (ball_dis < last_ball_dis)
+    {
+        dis_time = millis();
+    }
+    /* 
+    else if (ball_dis < 40)
+    {
+        dt_dis = 0;
+    } */
+
+    dt_dis = (millis() - dis_time) * 0.1;
+    
+    if (fabsf(dis_error) < 0.000005) //_deadband仮
     {
         dis_error = 0.0f;
     }
 
-    ball_dis_integral += dis_error * dt; // 誤差に時間をかけて積み上げる
+    ball_dis_integral += dis_error * dis_time; // 誤差に時間をかけて積み上げる
     // 積分が溜まりすぎると、目標を超えても止まらなくなるので制限をかける
-    ball_dis_integral = constrain(ball_dis_integral, -i_limit_dis, i_limit_dis);
+    //ball_dis_integral = constrain(ball_dis_integral, -i_limit_dis, i_limit_dis);
     Serial.print("lasdis");
     Serial.print(last_ball_dis);
     Serial.print("Error");
     Serial.print(dis_error);
     Serial.print(", INTE");
-    Serial.println(ball_dis_integral);
-    if (CameraV.orange_dis < 40)
+    Serial.print(ball_dis_integral);
+    Serial.print(", dt_dis");
+    Serial.println(dt_dis);
+    if (abs(ball_deg) < 20)
     {
         ball_dis_integral = 0;
         MoveSpeed = MotorSpeed;
     }
     else
     {
-        MoveSpeed += ball_dis_integral;
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, 0, 90);
+    }
+
+    if (MoveSpeed >= 100)
+    {
+        digitalWrite(LED4, HIGH);
+    }
+    else
+    {
+        digitalWrite(LED4, LOW);
     }
     
     
@@ -91,20 +116,20 @@ void move_loop()
         Serial.println("°");
         
 
-        if(abs(ball_deg) < 15)
+        if(abs(ball_deg) < 30)
         {
             //moveDeg = ball_deg;
             ballPID.process(ball_deg, 0.0f, true);
-            moveDeg = ballPID.output();
+            moveDeg = -ballPID.output();
             if(abs(ball_deg) < 2.5)
             {
                 moveDeg = 0;
             }
         }
 
-        else if(ball_deg >= 15)
+        else if(ball_deg >= 30)
         {
-            if(ball_deg < 30)
+/*             if(ball_deg < 30)
             {
                 moveDeg = ball_deg + 20;
                 //MotorSpeed = 70;
@@ -112,7 +137,8 @@ void move_loop()
             else
             {
                 moveDeg = ball_deg + 45;
-            }
+            } */
+            moveDeg = ball_deg + 45;
             /* 
             if(CameraV.orange_dis < 35)
             {
@@ -124,7 +150,7 @@ void move_loop()
             } */
             
         }
-        else if(ball_deg <= -15)
+        else if(ball_deg <= -30)
         {
             
             if(ball_deg > -30)

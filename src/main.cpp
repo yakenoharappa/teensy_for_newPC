@@ -13,7 +13,7 @@ void setup()
     Serial7.begin(115200);
 	//pinMode(GYRO_RESET, INPUT_PULLUP);
 	pinMode(LED1, OUTPUT);
-	pinMode(LED4, OUTPUT);
+	pinMode(LED2, OUTPUT);
 	pinMode(LED3, OUTPUT);
 	pinMode(LED4, OUTPUT);
 

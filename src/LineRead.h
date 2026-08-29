@@ -53,3 +53,4 @@ extern bool Line_trace;
 
 extern bool Side_Need;
 extern bool Angel_Need;
+const int Goal_over_dis = 60;

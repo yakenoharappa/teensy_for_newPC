@@ -5,34 +5,7 @@
 
 //おれは藤城や
 
-/* void setup() {
-    
-    int TrySetup = 0;
-    while (!Serial && TrySetup < 4)
-    {
-        Serial.begin(115200);
-        TrySetup ++;
-        delay(100);
-    }
 
-    pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(PIN_LED1, OUTPUT);
-    pinMode(PIN_LED2, OUTPUT);
-    pinMode(PIN_LED3, OUTPUT);
-
-    Serial1.begin(115200);
-    //motorsInit(&Serial2, 115200);
-    Serial2.begin(115200);
-
-
-    Jyunya_Setup();
-    readController_Setup();
-    Kicker_Setup();
-    //motors_Setup();
-    Screen_Setup();
-
-
-} */
 
 // PIDの計算機実体を1つ作成
 PID headingPID(0.6f, 0.0f, 0.6f, 0.6f); 
@@ -206,9 +179,22 @@ void motors_Update()
             }
         }
     }
+    else if (GoalDis < Goal_over_dis && Line_trace == false)
+    {
+        motorsMove((GoalDeg - 180), MotorSpeed);
+    }
     else if (IRv.detected == true)
     {
-        motorsMove(moveDeg, MoveSpeed);
+        if (Line_trace == true && LineNeed == true)
+        {
+            motorsMove(moveDeg, MoveSpeed * 0.4);
+        }
+        else
+        {
+            motorsMove(moveDeg, MoveSpeed);
+        }
+        
+        
     }
     else
     {

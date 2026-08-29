@@ -19,6 +19,7 @@ int LineBlocks_END[8] = {0};
 float LineBlocks_DEG[8] = {0};
 float LineBlocks_cos[8] = {0};
 float LineBlocks_sin[8] = {0};
+//int Goal_over_dis = 60;
 
 Line_States Line_state = Line_States::NoDetected;
 
@@ -268,7 +269,7 @@ void LineRead_update()
                 if ( abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i]), 180)) < 35 && abs(DegRangeChange(radian_deg(Angel.Linedegr), 180)) < 35 ) //!!!!degdataひくべきかも
                 {
                     all_same_check++;
-                    if ( all_same_check == trace_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 58 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
+                    if ( all_same_check == trace_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 56 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
                     {
                         if (Line_trace == false)
                         {
@@ -292,6 +293,7 @@ void LineRead_update()
     else
     {
         first_detected = false;
+        Line_trace = false;
     }
     
     switch (amount_LineBlock + amount_no_BlockLine)
@@ -347,16 +349,21 @@ void LineRead_update()
 
     int reversed_check = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - radian_deg(first_deg));
     
+
     if (Line_state == Line_States::CORNER)
     {
         
+    }
+    if (CamGoalDetected == true && GoalDeg < 30 && GoalDis < Goal_over_dis) //定数は仮！！！！
+    {
+        Angel.Linedegr = deg_radian(GoalDeg);
     }
     else if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 55 || reversed_check > 150) ) //もと45
     {
         Angel.Linedegr = first_deg;
         //Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
     }
-    else if ( reversed_check > 120 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
+    else if ( reversed_check > 100 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
     {
         if (Delection_Mode == 1)
         {
@@ -364,7 +371,8 @@ void LineRead_update()
         }
         else
         {
-            Angel.Linedegr = deg_radian(DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180));
+            //Angel.Linedegr = deg_radian(DegRangeChange(radian_deg(Angel.Linedegr) - 180, 180));
+            Angel.Linedegr = first_deg;
         }
     }
     

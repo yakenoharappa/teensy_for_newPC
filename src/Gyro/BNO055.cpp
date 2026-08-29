@@ -187,9 +187,9 @@ void BNO_update() {
         Reset = yaw_BNO;
         //Serial.print("Button");
         Serial.print(Button);
-        digitalWrite(LED3, LOW);
+        //digitalWrite(LED3, LOW);
     }else{
-        digitalWrite(LED3, HIGH);
+        //digitalWrite(LED3, HIGH);
     }
     yaw_BNO = yaw_BNO - Reset;
 

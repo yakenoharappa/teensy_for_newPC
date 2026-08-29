@@ -53,7 +53,7 @@ float az = 0;
 float xx = 0;
 float xy = 0;
 
-float dt = 0;
+float dt_LSM = 0;
 
 void writeReg(uint8_t reg, uint8_t val)
 {
@@ -216,7 +216,7 @@ void LSM_update()
     // dt計算
     //------------------------
     unsigned long now = micros();
-    dt = (now - lastTime) / 1000000.0f;
+    dt_LSM = (now - lastTime) / 1000000.0f;
     
 
     //------------------------
@@ -234,14 +234,14 @@ void LSM_update()
     // 積分
     //------------------------
     lastTime = now;
-    theta += gz * dt;
-    vx += (ax * 9.80665) * dt;
-    vy += (ay * 9.80665) * dt;
+    theta += gz * dt_LSM;
+    vx += (ax * 9.80665) * dt_LSM;
+    vy += (ay * 9.80665) * dt_LSM;
     xx += vx;
     xy += vy;
 
 
-    //x += 1/2 *ax * dt;
+    //x += 1/2 *ax * dt_LSM;
     //v = v0 + a * t;
 
     //------------------------
@@ -283,8 +283,9 @@ void LSM_update()
     Serial.print("  Gz: ");
     Serial.print(gz); */
 
-/*     Serial.print("  dt:");
-    Serial.println(dt, 6); */
+/* 
+    Serial.print("  dt_LSM:");
+    Serial.println(dt_LSM, 6); */
 
     #ifdef DEBUG_LSM
         Serial.print("ax:");

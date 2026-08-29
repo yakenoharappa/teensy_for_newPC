@@ -46,7 +46,7 @@ void Gyro_update()
         }
         else if ( abs(gz_LSM) < 5.5 &&  abs(pastdeg - yaw_BNO) < 1 )
         {
-            //deg_data = pastdeg += gz_LSM * dt;
+            //deg_data = pastdeg += gz_LSM * dt_LSM;
             deg_data = yaw_BNO;
         }
         else
