@@ -27,10 +27,16 @@ bool first_detected = 0;
 float first_deg = 0;
 unsigned long first_detected_time = 0;
 
-//Lineトレース
-int trace_check = 0;
+//Line_over
+int lineover_check = 0;
+bool Line_over = false;
+unsigned long lineover_time = 0;
+
+//Line_trace
 bool Line_trace = false;
-unsigned long trace_time = 0;
+float trace_X = 0;
+float trace_Y = 0;
+
 
 int amount_no_BlockLine = 0;
 int no_BlockLine[16] = {0};
@@ -51,18 +57,60 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
 }
 
 
-void Line_trace_move()
+void lineover_move()
 {
-    if ((millis() - trace_time) < 100 && GoalDis > 56 && abs(GoalDeg) < 8 )
+    if ((millis() - lineover_time) < 100 && GoalDis > 56 && abs(GoalDeg) < 8 )
     {
-        Line_trace = true;
+        Line_over = true;
     }
     else
     {
-        Line_trace = false;
+        Line_over = false;
         //LineNeed = true;
     }
 }
+
+void Line_trace_check()
+{
+    Serial.print("sumX:");
+    Serial.print(Angel.sumX);
+    Serial.print(", sumY:");
+    Serial.println(Angel.sumY);
+    Serial.print("LinneX:");
+    Serial.print(Angel.sumX / (amount_LineBlock + amount_no_BlockLine));
+    if (Line_state == Line_States::SIDE)
+    {
+        if (abs(radian_deg(Angel.Linedegr) - ball_deg) < 110)
+        {
+            trace_X = (1 - fabs(Angel.sumX) / (amount_LineBlock + amount_no_BlockLine));
+            trace_Y = 1;
+            Serial.print(radian_deg(atan2(trace_Y, trace_X)));
+            Line_trace = true;
+        }
+        else
+        {
+            Line_trace = false;
+        }
+        
+    }
+/*     else if (Line_state == Line_States::FRONTorBACK)
+    {
+
+    
+    } */
+    else
+    {
+        Line_trace = false;
+    }
+    
+    
+}
+
+void Line_trace_move()
+{
+
+}
+
 
 
 void MakingBlock()
@@ -133,7 +181,7 @@ void LineRead_update()
 {
     Angel.sumX = 0;
     Angel.sumY = 0;
-    trace_check = 0;
+    lineover_check = 0;
 
     LineNeed = false;
     Angel_Need = false;
@@ -223,9 +271,9 @@ void LineRead_update()
         else    // else if ( Angel.number_of_detect >= 2 )
         {
             Angel.Linedegr = AngelAtan;
-            if (Angel.number_of_detect == 2 && fabs(Angel.Linedegr) <= 0.01 && fabsf(Angel.sumX) <= 0.01 && fabsf(Angel.sumY) <= 0.01 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 500 )
+            if ((amount_no_BlockLine + amount_LineBlock) == 2 && abs(int(Angel.Linedegr)) == 0 && abs(int(Angel.sumX)) == 0 && abs(int(Angel.sumY)) == 0 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 500 )
             {
-                Angel.Linedegr = Angel.old_Linedegr[0];
+                Angel.Linedegr = first_deg; //= Angel.old_Linedegr[0];
                 Serial.print("check:");
                 Serial.println(CameraV.court_deg - CameraV.blue_deg);
             }
@@ -256,44 +304,54 @@ void LineRead_update()
             {
                 if (Angel.old_detect_times[i] > first_detected_time && Angel.last_detect_time > Angel.old_detect_times[i])
                 {
-                    trace_check++;
+                    lineover_check++;
                 }
             }
         }
         
-        if (trace_check > 3)
+        if (lineover_check > 1)
         {
             int all_same_check = 0;
-            for (int i = 0; i < trace_check; i++)
+            for (int i = 0; i < lineover_check; i++)
             {
                 if ( abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i]), 180)) < 35 && abs(DegRangeChange(radian_deg(Angel.Linedegr), 180)) < 35 ) //!!!!degdataひくべきかも
                 {
                     all_same_check++;
-                    if ( all_same_check == trace_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 56 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
+                    if (all_same_check == lineover_check)
                     {
-                        if (Line_trace == false)
-                        {
-                            trace_time = millis();
-                        }
                         Line_trace = true;
+                    }
+                    else
+                    {
+                        Line_trace = false;
+                    }
+                    
+                    if ( all_same_check == lineover_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 56 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
+                    {
+                        if (Line_over == false)
+                        {
+                            lineover_time = millis();
+                        }
+                        Line_over = true;
                     }
                 }
                 else
                 {
                     Line_trace = false;
+                    Line_over = false;
                 }
             }
         }
         else
         {
-            Line_trace = false;
+            Line_over = false;
         }
         //-------------------------------------------------------------------------------------------------------------
     }
     else
     {
         first_detected = false;
-        Line_trace = false;
+        Line_over = false;
     }
     
     switch (amount_LineBlock + amount_no_BlockLine)
@@ -336,6 +394,7 @@ void LineRead_update()
         break;
     }
 
+    Line_trace_check();
 /* 
     for (int i = 0; i < Linedata.amountData; i++)
     {
@@ -363,7 +422,7 @@ void LineRead_update()
         Angel.Linedegr = first_deg;
         //Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
     }
-    else if ( reversed_check > 100 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
+    else if ( reversed_check > 130 && reversed_check < 270 && (Angel.last_detect_time - Angel.old_detect_times[0]) < 350 )
     {
         if (Delection_Mode == 1)
         {
@@ -376,10 +435,10 @@ void LineRead_update()
         }
     }
     
-    if (Line_trace == true)
+    if (Line_over == true)
     {
         digitalWrite(LED1, HIGH);
-        Line_trace_move();
+        lineover_move();
     }
     else
     {

@@ -31,14 +31,14 @@ void Camera_update()
     CameraV.orange_dis = BitChange(Camera.values[12], Camera.values[13]);
 
 
-    if(CameraV.orange_dis < 80)
+/*     if(CameraV.orange_dis < 80)
     {
         distanceDevide = true;
     }
     else if(CameraV.orange_dis > 100)
     {
         distanceDevide = false;
-    }
+    } */
 
     if (uint16_t(CameraV.orange_deg) == 0xFF)
     {

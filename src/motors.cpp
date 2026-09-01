@@ -52,16 +52,23 @@ void motors_Setup()
 void motors_Update()
 {
     // この1行で、内部の現在の向きと目標値の計算がすべて更新されます
-    if( CamGoalDetected == true && Delection_Mode == true )
+/*     if( CamGoalDetected == true && Delection_Mode == true )
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
     }
     else
     {
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
-    }
+    } */
     
-
+    if(CamBallDetected == true && Delection_Mode == true && digitalRead(Catch_PIN) == 1)
+    {
+        motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
+    }
+    else
+    {
+        motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
+    } 
 /*     motorsPdMove();
        // motorsStop();
     } */
@@ -124,7 +131,7 @@ void motors_Update()
         //motorsMove(moveDeg, MotorSpeed);
     } */
     
-    if (LineNeed == true && Line_trace == false)
+    if (LineNeed == true && Line_over == false)
     {
         float LineMove_X = cos(deg_radian(LineMoveDegd));
         float LineMove_Y = sin(deg_radian(LineMoveDegd));
@@ -179,13 +186,13 @@ void motors_Update()
             }
         }
     }
-    else if (GoalDis < Goal_over_dis && Line_trace == false)
+    else if (GoalDis < Goal_over_dis && Line_over == false)
     {
-        motorsMove((GoalDeg - 180), MotorSpeed);
+        motorsMove((180 - yaw_BNO), MotorSpeed);
     }
     else if (IRv.detected == true)
     {
-        if (Line_trace == true && LineNeed == true)
+        if (Line_over == true && LineNeed == true)
         {
             motorsMove(moveDeg, MoveSpeed * 0.4);
         }

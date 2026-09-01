@@ -7,6 +7,7 @@
 #include "convert.h"
 #include "Camera.h"
 #include "Gyro/Gyro.h"
+#include "move.h"
 
 
 
@@ -48,9 +49,9 @@ extern bool SideLineV[3];
 extern bool LineNeed;
 extern bool first_detected;
 extern float first_deg;
-extern bool Line_trace;
+extern bool Line_over;
 
 
 extern bool Side_Need;
 extern bool Angel_Need;
-const int Goal_over_dis = 60;
+const int Goal_over_dis = 63;

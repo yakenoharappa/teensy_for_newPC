@@ -37,9 +37,16 @@ void move_loop()
     {
         ball_dis = IRv.dis;
     }
-    
+    if(ball_dis < 80)
+    {
+        distanceDevide = true;
+    }
+    else if(ball_dis > 100)
+    {
+        distanceDevide = false;
+    }
     //MotorSpeed = 75;
-    dis_error = (last_ball_dis - 40) * 0.000001;  //255, 0 / 2.15, -0.40 //もともとは、- 40
+    dis_error = (last_ball_dis) * 0.000001;  //255, 0 / 2.15, -0.40 //もともとは、- 40
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
@@ -73,14 +80,14 @@ void move_loop()
     Serial.print(ball_dis_integral);
     Serial.print(", dt_dis");
     Serial.println(dt_dis);
-    if (abs(ball_deg) < 20)
+    if (abs(ball_deg) < 30)
     {
         ball_dis_integral = 0;
         MoveSpeed = MotorSpeed;
     }
     else
     {
-        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, 0, 90);
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 90);
     }
 
     if (MoveSpeed >= 100)
@@ -93,7 +100,7 @@ void move_loop()
     }
     
     
-    if(IRv.dis > 0 && CamBallDetected == true  &&  distanceDevide == true)
+    if(IRv.detected == true && CamBallDetected == true  &&  distanceDevide == true)
     {
         ball_deg = CameraV.orange_deg;
         /* 

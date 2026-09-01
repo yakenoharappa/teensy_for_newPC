@@ -1,8 +1,6 @@
-#include "ATACKER.h"
-int first_move = 0;
+#include "DEFENDER.h"
 
-
-void ATACKER_setup()
+void DEFENDER_setup()
 {
     Screen_setup();
     display.println("Gyro_setup");
@@ -15,13 +13,14 @@ void ATACKER_setup()
     Kicker_Setup();
 }
 
-void ATACKER_loop()
+void DEFENDER_loop()
 {
     Gyro_update();
     Camera_update();
     
     IR_loop();
-    move_loop();
+    //move_loop();
+    DEFENCE_loop();
     
     LineMove_loop();
     

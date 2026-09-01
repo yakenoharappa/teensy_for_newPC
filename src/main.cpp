@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "PINOUTs.h"
 #include "ATACKER.h"
+#include "DEFENDER.h"
 
 
 void setup() 
@@ -23,9 +24,15 @@ void setup()
 	pinMode(UP_BUTTTON, INPUT_PULLUP);
 	pinMode(ENTER_BUTTON, INPUT_PULLUP);
 	
-	ATACKER_setup();
+	if (DEForATTA == 1)
+	{
+		ATACKER_setup();
+	}
+	else
+	{
+		DEFENDER_setup();
+	}
 }
-
 
 void loop() 
 {
@@ -36,8 +43,15 @@ void loop()
 	
 	/* Teensyフラッシュメモリアクセス
   		https://www.pjrc.com/teensy/td_libs_EEPROM.html */
-	ATACKER_loop();
-
+	
+	if (DEForATTA == 1)
+	{
+		ATACKER_loop();
+	}
+	else
+	{
+		DEFENDER_loop();
+	}
 	//Serial.print(digitalRead(ENTER_BUTTON));
 	//Serial.print(digital)
 	

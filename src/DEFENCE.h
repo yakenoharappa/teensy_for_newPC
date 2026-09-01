@@ -7,14 +7,12 @@
 #include "Screen.h"
 #include "Camera.h"
 #include "PID.hpp"
+#include "move.h"
 
-extern float moveDeg;
+//extern float moveDeg;
 
 
-void move_setup();
-void move_loop();
+void DEFENCE_setup();
+void DEFENCE_loop();
 
-extern int MoveSpeed;
-
-extern float ball_deg;
-extern int ball_dis;
+//extern int MoveSpeed;

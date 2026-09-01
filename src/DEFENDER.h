@@ -10,8 +10,7 @@
 #include "PINOUTs.h"
 #include "LineRead.h"
 #include "Kicker.h"
+#include "DEFENCE.h"
 
-void ATACKER_setup();
-void ATACKER_loop();
-
-//emaemaemaemaemaemaema
+void DEFENDER_setup();
+void DEFENDER_loop();
