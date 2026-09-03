@@ -61,7 +61,7 @@ void motors_Update()
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
     } */
     
-    if(CamBallDetected == true && Delection_Mode == true && digitalRead(Catch_PIN) == 1)
+    if(CamBallDetected == true && Delection_Mode == true && ball_dis < 40 && abs(ball_deg) < 25 && CamGoalDetected == true)
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
     }

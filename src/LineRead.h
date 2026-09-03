@@ -54,4 +54,4 @@ extern bool Line_over;
 
 extern bool Side_Need;
 extern bool Angel_Need;
-const int Goal_over_dis = 63;
+const int Goal_over_dis = 64;

@@ -17,7 +17,7 @@ void Kicker_Setup()
 void Kicker()
 {
     //if ()    //要変更
-    if ( KickerOnOff == true && digitalRead(Catch_PIN) == 1 && (abs(GoalDeg) < 10 || CamGoalDetected == false) )   //Kickerは、0で無反応、1で反応 before（KickerOnOff == true && digitalRead(Catch_PIN) == 1）
+    if ( KickerOnOff == true && digitalRead(Catch_PIN) == 1 )   //Kickerは、0で無反応、1で反応 before（KickerOnOff == true && digitalRead(Catch_PIN) == 1）
     {
         Kick();
     }

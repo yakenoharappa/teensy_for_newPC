@@ -12,7 +12,7 @@ int ball_dis = 0;
 float dt_dis = 0;
 unsigned long dis_time = 0;
 
-PID ballPID(0.5f, 0.0f, 0.1f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
+PID ballPID(1.0f, 0.0f, 0.05f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
 
 void move_setup()
 {
@@ -80,7 +80,7 @@ void move_loop()
     Serial.print(ball_dis_integral);
     Serial.print(", dt_dis");
     Serial.println(dt_dis);
-    if (abs(ball_deg) < 30)
+    if (abs(ball_deg) < 10)
     {
         ball_dis_integral = 0;
         MoveSpeed = MotorSpeed;
@@ -123,18 +123,19 @@ void move_loop()
         Serial.println("°");
         
 
-        if(abs(ball_deg) < 30)
+        if(abs(ball_deg) < 25)
         {
             //moveDeg = ball_deg;
-            ballPID.process(ball_deg, 0.0f, true);
+            ballPID.process(x, 0.0f, true);
             moveDeg = -ballPID.output();
-            if(abs(ball_deg) < 2.5)
+
+            if(digitalRead(Catch_PIN) == true)
             {
                 moveDeg = 0;
             }
         }
 
-        else if(ball_deg >= 30)
+        else if(ball_deg >= 25)
         {
 /*             if(ball_deg < 30)
             {
@@ -157,10 +158,10 @@ void move_loop()
             } */
             
         }
-        else if(ball_deg <= -30)
+        else if(ball_deg <= -25)
         {
             
-            if(ball_deg > -30)
+/*             if(ball_deg > -30)
             {
                 moveDeg = ball_deg - 20;
                // MotorSpeed = 70;
@@ -169,7 +170,7 @@ void move_loop()
             {
                 moveDeg = ball_deg - 45;
                 
-            }
+            } */
             /* 
             if(CameraV.orange_dis < 35)
             {
@@ -179,7 +180,7 @@ void move_loop()
             {
                 moveDeg = ball_deg - 45;
             } */
-            
+            moveDeg = ball_deg - 45;
         }
         /* else if(ball_deg >= 8)
         {
