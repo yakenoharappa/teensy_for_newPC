@@ -5,7 +5,7 @@
 
 //おれは藤城や
 
-
+float PIDk = 1;
 
 // PIDの計算機実体を1つ作成
 PID headingPID(0.6f, 0.0f, 0.6f, 0.6f); 
@@ -61,13 +61,15 @@ void motors_Update()
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
     } */
     
-    if(CamBallDetected == true && Delection_Mode == true && ball_dis < 40 && abs(ball_deg) < 25 && CamGoalDetected == true)
+    if (Delection_Mode == true && CamGoalDetected == true && ball_dis < 75 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
+        PIDk = 1;
     }
     else
     {
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
+        PIDk = 1;
     } 
 /*     motorsPdMove();
        // motorsStop();

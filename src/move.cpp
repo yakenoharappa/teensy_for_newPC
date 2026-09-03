@@ -12,7 +12,7 @@ int ball_dis = 0;
 float dt_dis = 0;
 unsigned long dis_time = 0;
 
-PID ballPID(1.0f, 0.0f, 0.05f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
+PID ballPID(1.0f, 0.0f, 0.1f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
 
 void move_setup()
 {
@@ -80,7 +80,7 @@ void move_loop()
     Serial.print(ball_dis_integral);
     Serial.print(", dt_dis");
     Serial.println(dt_dis);
-    if (abs(ball_deg) < 10)
+    if (digitalRead (Catch_PIN) == 1 || IRv.detected == false)
     {
         ball_dis_integral = 0;
         MoveSpeed = MotorSpeed;

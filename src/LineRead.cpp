@@ -28,6 +28,7 @@ float first_deg = 0;
 unsigned long first_detected_time = 0;
 
 //Line_over
+int all_same_check = 0;
 int lineover_check = 0;
 bool Line_over = false;
 unsigned long lineover_time = 0;
@@ -186,6 +187,7 @@ void LineRead_update()
     lineover_check = 0;
     amount_LineBlock = 0;
     amount_no_BlockLine = 0;
+    all_same_check = 0;
 
     LineNeed = false;
     Angel_Need = false;
@@ -287,7 +289,7 @@ void LineRead_update()
             }
         }
 
-        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 375 || abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 45 || ((abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 45 && abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 120) || abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 270) ) //かえたよ2026/08/24_21:30
+        if ((Angel.last_detect_time - Angel.old_detect_times[0]) > 375 || abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 45 || (abs(Angel.Linedegr - Angel.old_Linedegr[0]) > 45 && abs(Angel.Linedegr - Angel.old_Linedegr[0]) < 120) ) //かえたよ2026/08/24_21:30
         {
             if (first_detected == false)
             {
@@ -302,7 +304,7 @@ void LineRead_update()
         }
         
         ////-----------------------------------------------------------------------------
-        //if ((Angel.last_detect_time - first_detected_time) > 1000)
+        //if ((Angel.last_detect_time - first_detected_time) > 500)
         //{
             for (int i = 0; i < Angel.HowManyLine; i++)
             {
@@ -311,44 +313,52 @@ void LineRead_update()
                     lineover_check++;
                 }
             }
+            lineover_check = constrain(lineover_check, 0, 5);
         //}
         
         if (lineover_check > 1)
         {
-            int all_same_check = 0;
+            
             for (int i = 0; i < lineover_check; i++)
             {
-                if ( abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i]), 180)) < 35 && abs(DegRangeChange(radian_deg(Angel.Linedegr), 180)) < 35 ) //!!!!degdataひくべきかも
+                if (abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i] - first_deg), 180)) < 35) //もし後ろでトレースをしたくなったときは、条件文を追加すること
                 {
                     all_same_check++;
-                    if (all_same_check == lineover_check)
+                    /* 
+                    if ( abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i]), 180)) < 35 && abs(DegRangeChange(radian_deg(Angel.Linedegr), 180)) < 35 ) //!!!!degdataひくべきかも
                     {
-                        Line_trace = true;
-                    }
-                    else
-                    {
-                        Line_trace = false;
-                    }
-                    
-                    if ( all_same_check == lineover_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 56 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
-                    {
-                        if (Line_over == false)
-                        {
-                            lineover_time = millis();
-                        }
-                        Line_over = true;
-                    }
+                        all_same_check++;
+                    } */
                 }
-                else
+                
+
+            }
+            if (all_same_check == lineover_check)
+            {
+                Line_trace = true;
+            }
+            else
+            {
+                Line_trace = false;
+            }
+            
+            if ( all_same_check == lineover_check && GoalDis < 80 && Delection_Mode == true && GoalDis > 56 && abs(GoalDeg) < 8) //----------------------------------------------------------------------------------------------
+            {
+                if (Line_over == false)
                 {
-                    Line_trace = false;
-                    Line_over = false;
+                    lineover_time = millis();
                 }
+                Line_over = true;
+            }
+            else
+            {
+                Line_over = false;
             }
         }
         else
         {
             Line_over = false;
+            Line_trace = false;
         }
         //-------------------------------------------------------------------------------------------------------------
     }
@@ -421,28 +431,36 @@ void LineRead_update()
     int reversed_CAM = abs(DegRangeChange(radian_deg(Angel.Linedegr), 180) - radian_deg(CameraV.court_deg));
     
     float GoalY = cos(deg_radian(GoalDeg)) * GoalDis;
+    /* 
     Serial.print("cos");
     Serial.print(cos(deg_radian(GoalDeg)));
     Serial.print("GoalDeg=");
     Serial.print(GoalDeg);
     Serial.print("GoalDis=");
     Serial.print(GoalDis);
+    */
+
     Serial.print(", GoalY=");
-    Serial.println(GoalY);
+    Serial.print(GoalY);
+    Serial.print("Lineover=");
+    Serial.print(lineover_check);
+    Serial.print(", allsame=");
+    Serial.println(all_same_check);
     
 
-    if (Line_state == Line_States::CORNER)
+
+    if (CamGoalDetected == true && GoalY < Goal_over_dis) //定数は仮！！！(CamGoalDetected == true && GoalDeg < 30 && GoalY < Goal_over_dis)
+    {
+        Angel.Linedegr = deg_radian(GoalDeg);
+    }
+    else if (Line_state == Line_States::CORNER)
     {
         if (abs(first_deg - CameraV.court_deg) > 170 && Delection_Mode == true)
         {
             Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
         }
     }
-    else if (CamGoalDetected == true && GoalDeg < 30 && GoalY < Goal_over_dis) //定数は仮！！！！
-    {
-        Angel.Linedegr = deg_radian(GoalDeg);
-    }
-    else if ( (Angel.last_detect_time - Angel.old_detect_times[0]) < 400 && first_detected == false && (reversed_check < 55 || (reversed_check > 150 && reversed_check < 300)) ) //もと45
+    else if ( (Angel.last_detect_time - Angel.old_detect_times[0]) < 300 && first_detected == false && (reversed_check < 45 || (reversed_check > 150 && reversed_check < 300)) ) //もと45
     {
         Angel.Linedegr = first_deg;
         if (abs(first_deg - CameraV.court_deg) > 170 && Delection_Mode == true)

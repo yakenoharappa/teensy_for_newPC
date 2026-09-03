@@ -171,7 +171,8 @@ void motorsMove(float deg, float power)
     }
 
     // 制御
-    _dsr.move((int)roundf(powers[0]), (int)roundf(powers[1]), (int)roundf(powers[2]), (int)roundf(powers[3]));
+    _dsr.move((int)roundf(powers[0]), (int)roundf(powers[1]), (int)roundf(powers[2])*PIDk, (int)roundf(powers[3])*PIDk);
+
 }
 
 // PD制御のみで機体を回転させる
