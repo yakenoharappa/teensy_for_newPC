@@ -9,6 +9,11 @@ bool Angel_Need = false;
 
 const float Linedegs[] = {5.625 *2, 5.625*6, 5.625*10 , 5.625*14, 5.625*18, 5.625*22, 5.625*26, 5.625*30, 5.625*34, 5.625*38, 5.625*42, 5.625*46, 5.625*50, 5.625*54, 5.625*58, 5.625*62};
 
+//Line_dis
+float Linedis_X = 0;
+float Linedis_Y = 0;
+
+
 //for Making Blocks
 int amount_LineBlock = 0;
 int last_amount_LineBlock = 0;
@@ -73,27 +78,54 @@ void lineover_move()
 
 void Line_trace_check()
 {
+    Serial.print("TraTru?=");
+    Serial.print(Line_trace);
+    Serial.print(", OVER?=");
+    Serial.print(Line_over);
     Serial.print("sumX:");
     Serial.print(Angel.sumX);
     Serial.print(", sumY:");
     Serial.println(Angel.sumY);
     Serial.print("LinneX:");
-    Serial.print(Angel.sumX / (amount_LineBlock + amount_no_BlockLine));
+    
+    if ((amount_no_BlockLine - amount_LineBlock) == 1 && amount_LineBlock == 0)
+    {
+        Linedis_X = Angel.sumY / (amount_no_BlockLine) * 2;
+        Linedis_Y = Angel.sumX / (amount_no_BlockLine) * 2;
+        Serial.print(Linedis_X);
+        Serial.print(", Y=");
+        Serial.print(Linedis_Y);
+    }
+    else
+    {
+        Linedis_X = Angel.sumY / (amount_no_BlockLine);
+        Linedis_Y = Angel.sumX / (amount_no_BlockLine);
+        Serial.print(Linedis_X);
+        Serial.print(", Y=");
+        Serial.print(Linedis_Y);
+    }
+
+    Serial.print("amount=");
+    Serial.print(amount_no_BlockLine);
+    Serial.print(", sa=");
+    Serial.println((amount_no_BlockLine - amount_LineBlock));
     if (Line_state == Line_States::SIDE)
     {
-        if (abs(radian_deg(Angel.Linedegr) - ball_deg) < 110)
+        if (abs(radian_deg(Angel.Linedegr) - ball_deg) < 110 && Line_trace == true)
         {
-            trace_X = (1 - fabs(Angel.sumX) / (amount_LineBlock + amount_no_BlockLine));
+            trace_X = (1 - fabs(Linedis_X) / (amount_no_BlockLine));
             trace_Y = 1;
-            Serial.print(radian_deg(atan2(trace_Y, trace_X)));
-            Line_trace = true;
+            Serial.print("TRACE=");
+            Serial.println(radian_deg(atan2(trace_Y, trace_X)));
+            //Line_trace = true;
         }
         else
         {
-            Line_trace = false;
+            //Line_trace = false;
         }
     }
-/*     else if (Line_state == Line_States::FRONTorBACK)
+/* 
+    else if (Line_state == Line_States::FRONTorBACK)
     {
 
     
@@ -102,8 +134,6 @@ void Line_trace_check()
     {
         Line_trace = false;
     }
-    
-    
 }
 
 void Line_trace_move()
@@ -321,6 +351,12 @@ void LineRead_update()
             
             for (int i = 0; i < lineover_check; i++)
             {
+                Serial.print("old");
+                Serial.print(radian_deg(Angel.old_Linedegr[i]));
+                Serial.print(", F=");
+                Serial.print(radian_deg(first_deg));
+                Serial.print("ALLSAME=");
+                Serial.println((radian_deg(Angel.old_Linedegr[i]) - radian_deg(first_deg)));
                 if (abs(DegRangeChange(radian_deg(Angel.old_Linedegr[i] - first_deg), 180)) < 35) //もし後ろでトレースをしたくなったときは、条件文を追加すること
                 {
                     all_same_check++;
@@ -330,9 +366,8 @@ void LineRead_update()
                         all_same_check++;
                     } */
                 }
-                
-
             }
+
             if (all_same_check == lineover_check)
             {
                 Line_trace = true;
@@ -440,12 +475,13 @@ void LineRead_update()
     Serial.print(GoalDis);
     */
 
+
     Serial.print(", GoalY=");
     Serial.print(GoalY);
     Serial.print("Lineover=");
     Serial.print(lineover_check);
     Serial.print(", allsame=");
-    Serial.println(all_same_check);
+    Serial.println(all_same_check); 
     
 
 
@@ -493,7 +529,7 @@ void LineRead_update()
     }
 
 
-    if (Angel.Linedegr != Angel.old_Linedegr[0])
+    if (Angel_Need == true)
     {
         for (int i = (Angel.HowManyLine - 1) ; i > 0 ; i--)
         {

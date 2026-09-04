@@ -8,6 +8,7 @@
 #include "Serial.h"
 #include "Screen.h"
 #include "IR_read.h"
+#include "Gyro/Gyro.h"
 //#include "motor"
 #include "motorsDSR.hpp"
 #include "move.h"

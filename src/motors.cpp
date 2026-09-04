@@ -6,7 +6,8 @@
 //おれは藤城や
 
 float PIDk = 1;
-
+float Vx = 0;
+float Vy = 0;
 // PIDの計算機実体を1つ作成
 PID headingPID(0.6f, 0.0f, 0.6f, 0.6f); 
 

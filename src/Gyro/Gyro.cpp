@@ -25,13 +25,13 @@ void Gyro_setup()
 {
     //Serial.begin(115200);
     BNO_setup();
-    //LSM_setup();
+    LSM_setup();
 }
 
 void Gyro_update()
 {
     BNO_update();
-    //LSM_update();
+    LSM_update();
     if ( LSM_STATUS == true && usingGyro == MIX )
     {
         if ( abs(gz_LSM) > 5.5 && abs(pastdeg - yaw_BNO) <= 0.5 )

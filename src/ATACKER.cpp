@@ -57,7 +57,8 @@ void ATACKER_loop()
         Screen_Update();
         Kicker_end();
     }
+/* 
     Serial.print("MoveSpeed=");
-    Serial.println(MoveSpeed);
+    Serial.println(MoveSpeed); */
     //delay(100);
 }
