@@ -40,7 +40,8 @@ void BNO_setup() {
     //pinMode(LED3, OUTPUT);
     Serial.println("BNO_BEGIN");
     //下記のOPERATION_MODE_IMUPLUSを追加してみました。どっちのほうがいいか、比較検討してみてください。
-    while (!bno.begin(OPERATION_MODE_IMUPLUS) && BNObegin < 6) {
+    while (!bno.begin(OPERATION_MODE_IMUPLUS) && BNObegin < 6) 
+    {
         Serial.println("BNO055 was not found!");
         BNObegin++;
         delay(1000);

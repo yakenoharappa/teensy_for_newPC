@@ -51,7 +51,9 @@ extern bool first_detected;
 extern float first_deg;
 extern bool Line_over;
 
+extern bool Line_trace;
+
 
 extern bool Side_Need;
 extern bool Angel_Need;
-const int Goal_over_dis = 64;
+const int Goal_over_dis = 65;

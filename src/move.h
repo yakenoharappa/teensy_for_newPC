@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "PID.hpp"
 
+
 extern float moveDeg;
 
 
@@ -18,3 +19,6 @@ extern int MoveSpeed;
 
 extern float ball_deg;
 extern int ball_dis;
+
+extern int Goal_movedeg;
+extern int speedmix;

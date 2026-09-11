@@ -10,6 +10,8 @@ int GoalDis = 0;
 int GoalDeg = 0;
 bool distanceDevide = false;
 
+float GoalY = 0;
+
 readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
                                             //　↑この数には、STARTとENDは含まない
 
@@ -68,6 +70,8 @@ void Camera_update()
     {
         CamGoalDetected = true;
     }
+
+    GoalY = cos(deg_radian(GoalDeg)) * GoalDis;
 }
 
 /* 

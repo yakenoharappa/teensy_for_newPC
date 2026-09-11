@@ -62,9 +62,11 @@ void motors_Update()
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
     } */
     
-    if (Delection_Mode == true && CamGoalDetected == true && ball_dis < 75 && (CamBallDetected == true || IRv.detected == true))
+    if (Delection_Mode == true && CamGoalDetected == true && digitalRead(Catch_PIN) == 1 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
+        //motorsPidProcess(&headingPID , Goal_movedeg , 0.0f);
+        //MotorSpeed = speedmix;
         PIDk = 1;
     }
     else
@@ -143,38 +145,25 @@ void motors_Update()
         float moveDeg_Y = sin(deg_radian(moveDeg));
 
         float MOVE_Deg2 = 0;
-
-        //もどしたよ！！
-/* 
-        if (IRv.detected == true || CamBallDetected == true) //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-        {
-            if (Side_Need == true && Angel_Need == false)
-            {
-                motorsMove(moveDeg, MotorSpeed * 0.5);
-            }
-            else
-            { 
-                MOVE_Deg2 = atan2(LineMove_Y * 1.1 + moveDeg_Y, LineMove_X * 1.1 + moveDeg_X);
-                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
-            }
-        }
-        else
-        {
-            motorsMove(LineMoveDegd, MotorSpeed);
-        } */
         
         if (Angel_Need == true)
         {
             digitalWrite(LED2, LOW);
+            //motorsMove(LineMoveDegd, MotorSpeed); 
             if (IRv.detected == true || CamBallDetected == true)
             {
-                MOVE_Deg2 = atan2(LineMove_Y * 1.1 + moveDeg_Y, LineMove_X * 1.1 + moveDeg_X);
+                if (Line_trace == true)
+                {
+                    /* code */
+                }
+                
+                MOVE_Deg2 = atan2(LineMove_Y * 1.2 + moveDeg_Y, LineMove_X * 1.2 + moveDeg_X);
                 motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
             }
             else
             {
                 motorsMove(LineMoveDegd, MotorSpeed);
-            }
+            } 
         }
         else
         {
@@ -203,8 +192,6 @@ void motors_Update()
         {
             motorsMove(moveDeg, MoveSpeed);
         }
-        
-        
     }
     else
     {

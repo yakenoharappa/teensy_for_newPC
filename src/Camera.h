@@ -34,3 +34,5 @@ extern int GoalDis;
 extern int GoalDeg;
 
 extern bool CamGoalDetected;
+
+extern float GoalY;

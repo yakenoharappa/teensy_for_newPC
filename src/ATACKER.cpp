@@ -6,12 +6,16 @@ void ATACKER_setup()
 {
     Screen_setup();
     display.println("Gyro_setup");
+    display.display();
     Gyro_setup();
     display.println("move_setup");
+    display.display();
     move_setup();
     display.println("motors_setup");
+    display.display();
     motors_Setup();
     display.println("Kicker_setup");
+    display.display();
     Kicker_Setup();
 }
 

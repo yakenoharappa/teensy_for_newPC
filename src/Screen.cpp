@@ -179,7 +179,7 @@ bool Enter(){
     if ( digitalRead(ENTER_BUTTON) == LOW && (millis() - LastTouched) > 300 )
     {
         noTone(Buzzer_PIN);
-        tone(Buzzer_PIN, NOTE_C4, 100);
+        tone(Buzzer_PIN, NOTE_C5, 100);
         LastTouched = millis();
         Input_Back_List();
         return true;
@@ -195,7 +195,7 @@ bool UpKey(){
     if ( digitalRead(UP_BUTTTON) == LOW && (millis() - LastTouched) > 300 )
     {
         noTone(Buzzer_PIN);
-        tone(Buzzer_PIN, NOTE_C4, 100);
+        tone(Buzzer_PIN, NOTE_C6, 100);
         LastTouched = millis();
         return true;
     }
@@ -210,7 +210,7 @@ bool DownKey(){
     if ( digitalRead(DOWN_BUTTON) == LOW && (millis() - LastTouched) > 300 )
     {
         noTone(Buzzer_PIN);
-        tone(Buzzer_PIN, NOTE_C4, 100);
+        tone(Buzzer_PIN, NOTE_C3, 100);
         LastTouched = millis();
         return true;
     }
@@ -799,16 +799,17 @@ void Screen_Update()
         display.print("Line");
         display.setFont(NULL);
         display.setCursor(0, 20);
-        display.println("deg=");
+        display.println("Ldeg=");
         if (LineNeed == true)
         {
             display.println(DegRangeChange(radian_deg(Angel.Linedegr) , -180));
+            display.print("Mo=");
             display.println(LineMoveDegd);
             display.print("STATE");
             display.println(Line_state);
             if (Angel_Need == true)
             {
-                display.drawLine(Line_en_offset + SCREEN_WIDTH/2, SCREEN_HEIGHT/2, Line_en_offset + SCREEN_WIDTH/2 + sin(deg_radian(LineMoveDegd)) * 30, SCREEN_HEIGHT/2 + cos(deg_radian(LineMoveDegd)) * 30, WHITE);
+                display.drawLine(Line_en_offset + SCREEN_WIDTH/2, SCREEN_HEIGHT/2, Line_en_offset + SCREEN_WIDTH/2 + sin(deg_radian(LineMoveDegd)) * 30, SCREEN_HEIGHT/2 - cos(deg_radian(LineMoveDegd)) * 30, WHITE);
             }
         }
         else
@@ -818,6 +819,8 @@ void Screen_Update()
 
         display.print("F=");
         display.println(radian_deg(first_deg));
+        display.print("Ca-=");
+        display.println(DegRangeChange(CameraV.court_deg - 180, -180));
         
 
         //円を描く
