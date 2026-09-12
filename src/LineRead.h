@@ -52,6 +52,8 @@ extern float first_deg;
 extern bool Line_over;
 
 extern bool Line_trace;
+extern float trace_X;
+extern float trace_Y;
 
 
 extern bool Side_Need;

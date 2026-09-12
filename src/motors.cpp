@@ -22,8 +22,8 @@ void motors_Setup()
 
     #ifdef SecondRobot
         //3Dプリンタ機体
-        motorsSetMoveSign(1, -1, -1, -1);       // 移動のための符号をセット
-        motorsSetPdSign(1, -1, -1, -1);             // PID制御のための符号をセット
+        motorsSetMoveSign(1, -1, -1, 1);       // 移動のための符号をセット
+        motorsSetPdSign(1, -1, -1, 1);             // PID制御のための符号をセット
         motorsSetDegPosition(45, 315, 135, 225); // モータの物理位置をセット
         motorsStop();                            // 停止させておく
     #else
@@ -62,10 +62,9 @@ void motors_Update()
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
     } */
     
-    if (Delection_Mode == true && CamGoalDetected == true && digitalRead(Catch_PIN) == 1 && (CamBallDetected == true || IRv.detected == true))
+    if (Delection_Mode == true && CamGoalDetected == true && abs(ball_deg + yaw_BNO) < 80 && y < 80 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
-        //motorsPidProcess(&headingPID , Goal_movedeg , 0.0f);
         //MotorSpeed = speedmix;
         PIDk = 1;
     }
@@ -154,11 +153,29 @@ void motors_Update()
             {
                 if (Line_trace == true)
                 {
-                    /* code */
+                    if (trace_X > 0)
+                    {
+                        realmoveX = min(trace_X, moveDeg_X);
+                        Serial.print("Move_X-=");
+                        Serial.print(realmoveX);
+                    }
+                    else
+                    {
+                        realmoveX = max(trace_X, moveDeg_X);
+                        Serial.print("Move_X+=");
+                        Serial.print(realmoveX);
+                    }
+                    Serial.print("MOVE=");
+                    Serial.println(realmoveX);
+                    realmoveY = 1;
+                    MOVE_Deg2 = atan2(realmoveX, realmoveY); //なんか逆かも
+                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
                 }
-                
-                MOVE_Deg2 = atan2(LineMove_Y * 1.2 + moveDeg_Y, LineMove_X * 1.2 + moveDeg_X);
-                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                else
+                {
+                    MOVE_Deg2 = atan2(LineMove_Y * 1.2 + moveDeg_Y, LineMove_X * 1.2 + moveDeg_X);
+                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                }
             }
             else
             {
@@ -182,7 +199,7 @@ void motors_Update()
     {
         motorsMove((180 - yaw_BNO), MotorSpeed);
     }
-    else if (IRv.detected == true)
+    else if (IRv.detected == true || CamBallDetected == true)
     {
         if (Line_over == true && LineNeed == true)
         {

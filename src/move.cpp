@@ -17,8 +17,9 @@ int x = 0;
 int y = 0; 
 int speedmix = 0;
 int Goal_movedeg = 0;
+float change_kd = 0.05f;
 
-PID ballPID(1.0f, 0.0f, 0.1f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
+PID ballPID(1.0f, 0.0f, 0.05f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
 
 void move_setup()
 {
@@ -34,6 +35,9 @@ void move_setup()
 
 void move_loop()
 {
+    //ballPID.setGains(1.0f, 0.0f, change_kd);
+    MoveSpeed = MotorSpeed;
+
     ball_deg = IRv.deg;
     if (CamBallDetected == true)
     {
@@ -52,7 +56,7 @@ void move_loop()
         distanceDevide = false;
     }
     //MotorSpeed = 75;
-    dis_error = (last_ball_dis) * 0.00001;  //255, 0 / 2.15, -0.40 //もともとは、- 40
+    dis_error = (last_ball_dis) * 0.0000001;  //255, 0 / 2.15, -0.40 //もともとは、- 40
     if(ball_deg > 180)
     {
         ball_deg = ball_deg - 360;
@@ -93,10 +97,10 @@ void move_loop()
     }
     else
     {
-        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 95);
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 90);
     }
 
-    if (MoveSpeed >= 100)
+    if (MoveSpeed >= 88)
     {
         digitalWrite(LED4, HIGH);
     }
@@ -121,7 +125,7 @@ void move_loop()
         speedmix = sqrt(Vex * Vex + Vey * Vey);
         Goal_movedeg = atan2(Vex , Vey);
 
-        float mouth_ball_deg = radian_deg(atan2(x , y - 10));    //26は実測値
+        float mouth_ball_deg = radian_deg(atan2(x , y - 18));    //26は実測値
 
         ball_deg = mouth_ball_deg;
         Serial.print("x,y軸");
@@ -133,15 +137,25 @@ void move_loop()
         Serial.println("°");
         
 
-        if(abs(x) < 15)
+        if(abs(x) < 15 && y > 0)
         {
+            change_kd = (15.0f - fabs(x))/ 50.0f;
+            if(change_kd < 0)
+            {
+                change_kd = 0.05f;
+            }
             //moveDeg = ball_deg;
+            ballPID.setGains(1.0f, 0.0f, change_kd);
             ballPID.process(x, 0.0f, true);
             moveDeg = -ballPID.output();
 
             if(digitalRead(Catch_PIN) == true)
             {
                 moveDeg = 0;
+            }
+            else if(y < 60)
+            {
+                MoveSpeed = MoveSpeed * 75 / 90;
             }
         }
 
@@ -191,6 +205,17 @@ void move_loop()
                 moveDeg = ball_deg - 45;
             } 
             //moveDeg = ball_deg - 45;
+        }
+        else
+        {
+            if(x > 0)
+            {
+                moveDeg = ball_deg + 45;
+            }
+            else
+            {
+                moveDeg = ball_deg - 45;
+            }
         }
         /* else if(ball_deg >= 8)
         {

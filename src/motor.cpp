@@ -84,7 +84,7 @@ void motorsDirectMove(int value_1ch, int value_2ch, int value_3ch, int value_4ch
 }
 
 #define PD_MAX 80.0f
-#define PD_MOVING_MAX 60.0f
+#define PD_MOVING_MAX 70.0f
 float motor_bias[4] = {1.00 , 1.00 , 1.00 , 1.00};  //左下 左前 右下 右上
 void motorsMove(float deg, float power)
 {
@@ -92,7 +92,7 @@ void motorsMove(float deg, float power)
 
     float powers[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     for (int i = 0; i < 4; i++)
-        powers[i] = -sinf(radians(_deg_position[i] - deg)) * float(MotorSpeed * _move_sign[i]);
+        powers[i] = -sinf(radians(_deg_position[i] - deg )) * float(MotorSpeed * _move_sign[i]);
             for (int i = 0; i < 4; i++)
         powers[i] = powers[i] * motor_bias[i];
     // 最大出力を探す

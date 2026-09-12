@@ -10,6 +10,8 @@ int GoalDis = 0;
 int GoalDeg = 0;
 bool distanceDevide = false;
 
+int old_GoalDeg[4] = {0};
+
 float GoalY = 0;
 
 readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
@@ -61,6 +63,18 @@ void Camera_update()
         GoalDis = CameraV.blue_dis;
         GoalDeg = CameraV.blue_deg;
     }
+
+    int Look_GoalCheck = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        if (old_GoalDeg[0] != 0xFF)
+        {
+            
+        } 
+    }
+    
+
+    
     
     if (uint16_t(GoalDis) == 0xFF && uint16_t(GoalDeg) == 0xFF)
     {
@@ -72,6 +86,14 @@ void Camera_update()
     }
 
     GoalY = cos(deg_radian(GoalDeg)) * GoalDis;
+    if (old_GoalDeg[0] != GoalDeg)
+    {
+        for (int i = 3; i > 0; i--)
+        {
+            old_GoalDeg[i] = old_GoalDeg[i-1];
+        }
+        old_GoalDeg[0] = GoalDeg;
+    }
 }
 
 /* 

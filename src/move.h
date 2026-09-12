@@ -19,6 +19,7 @@ extern int MoveSpeed;
 
 extern float ball_deg;
 extern int ball_dis;
-
+extern int x;
+extern int y;
 extern int Goal_movedeg;
 extern int speedmix;

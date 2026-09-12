@@ -2,7 +2,7 @@
 
 unsigned long LastKickedTime = millis();
 bool KickerCharge = 0;
-const int CoolTime = 1000;
+const int CoolTime = 700;
 
 
 
@@ -21,7 +21,7 @@ void Kicker()
     {
         Kick();
     }
-    else if ( (millis() - LastKickedTime) >= 300 )
+    else if ( (millis() - LastKickedTime) >= 150 )
     {
         Kicker_end();
     }
@@ -39,7 +39,7 @@ void Kick()
         //digitalWrite(LED4, HIGH);
         //digitalWrite(LED1, LOW);
     }
-    else if ( (millis() - LastKickedTime) <= 2500 && (millis() - LastKickedTime) >= 300 )   //充電
+    else if ( (millis() - LastKickedTime) <= 2000 && (millis() - LastKickedTime) >= 150 )   //充電
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, HIGH);
@@ -47,7 +47,7 @@ void Kick()
         //digitalWrite(LED4, LOW);
         //digitalWrite(LED1, LOW);
     }
-    else if ( (millis() - LastKickedTime) >= 2500 )      // >Cooltimeで、Kicker == 0    //充電完了！
+    else if ( (millis() - LastKickedTime) >= 2000 )      // >Cooltimeで、Kicker == 0    //充電完了！
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, LOW);
@@ -67,7 +67,7 @@ void Kick()
 
 void Kicker_end()
 {
-    if ( (millis() - LastKickedTime) >= 2500 )
+    if ( (millis() - LastKickedTime) >= 2000 )
     {
         digitalWrite(FET2, LOW);
         digitalWrite(FET1, LOW);

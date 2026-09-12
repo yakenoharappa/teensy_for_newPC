@@ -71,7 +71,7 @@ Line::Line(int amount) : old_Linedegr(amount), old_detect_times(amount)
 
 void lineover_move()
 {
-    if ((millis() - lineover_time) < 100 && GoalY > 56 && abs(GoalDeg) < 8 )
+    if ((millis() - lineover_time) < 100 && GoalY > 58 && abs(GoalDeg) < 8 )
     {
         Line_over = true;
     }
@@ -84,15 +84,16 @@ void lineover_move()
 
 void Line_trace_check()
 {
-    Serial.print("TraTru?=");
+    Serial.print("Trace?=");
     Serial.print(Line_trace);
     Serial.print(", OVER?=");
     Serial.print(Line_over);
+/* 
     Serial.print("sumX:");
     Serial.print(Angel.sumX);
     Serial.print(", sumY:");
     Serial.println(Angel.sumY);
-    Serial.print("LinneX:");
+    Serial.print("LinneX:"); */
 
     Linedis_X = basic_sumY / basic_SUM;
     Linedis_Y = basic_sumX / basic_SUM;
@@ -126,10 +127,19 @@ void Line_trace_check()
     {
         if (abs(radian_deg(Angel.Linedegr) - ball_deg) < 110 && Line_trace == true && sin(Angel.Linedegr) * sin(deg_radian(ball_deg)) > 0)
         {
-            trace_X = (1 - fabs(Linedis_X));
+            //trace_X = (1 - fabs(Linedis_X));
+            if (DegRangeChange(radian_deg(Angel.old_Linedegr[0]), 180) >= 0)
+            {
+                trace_X = Linedis_X - (0.5);
+            }
+            else
+            {
+                trace_X = Linedis_X + (0.5);
+            }
+            
             trace_Y = 1;
-            Serial.print("TRACE=");
-            Serial.println(radian_deg(atan2(trace_Y, trace_X)));
+            //Serial.print("TRACE=");
+            //Serial.println(radian_deg(atan2(trace_Y, trace_X)));
             Line_trace = true;
         }
         else
@@ -137,12 +147,6 @@ void Line_trace_check()
             Line_trace = false;
         }
     }
-/* 
-    else if (Line_state == Line_States::FRONTorBACK)
-    {
-
-    
-    } */
     else
     {
         Line_trace = false;
@@ -395,7 +399,7 @@ void LineRead_update()
                 }
             }
 
-            if (all_same_check == lineover_check)
+            if (all_same_check == lineover_check && all_same_check > 2)
             {
                 Line_trace = true;
             }
@@ -553,8 +557,8 @@ void LineRead_update()
     {
         if (reversedf_CAM > 155 && reversedf_CAM < 270 && Delection_Mode == true)
         {
-            //Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
-            Angel.Linedegr = deg_radian(radian_deg(Angel.Linedegr) - 180);
+            Angel.Linedegr = deg_radian(CameraV.court_deg - 180);
+            //Angel.Linedegr = deg_radian(radian_deg(Angel.Linedegr) - 180);
         }
     }
     else if ( (millis() - first_detected_time) < 500 && first_detected == false && (reversed_check < 55 || reversed_check > 150) ) //もと45
