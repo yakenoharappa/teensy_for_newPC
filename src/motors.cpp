@@ -8,6 +8,7 @@
 float PIDk = 1;
 float Vx = 0;
 float Vy = 0;
+int PIDpower = 0;
 // PIDの計算機実体を1つ作成
 PID headingPID(0.6f, 0.0f, 0.6f, 0.6f); 
 
@@ -61,8 +62,18 @@ void motors_Update()
     {
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
     } */
+    //PIDpower = abs(GoalDeg) * 25 / 90;
     
-    if (Delection_Mode == true && CamGoalDetected == true && abs(ball_deg + yaw_BNO) < 80 && y < 80 && (CamBallDetected == true || IRv.detected == true))
+    if(Delection_Mode == true &&  CamGoalDetected == true && y < 60 && y > 0 && abs(ball_deg + yaw_BNO) < 80 && (CamBallDetected == true || IRv.detected == true))
+    {
+        motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
+        PIDpower = abs(GoalDeg) * 25 / 75;
+    }
+    else
+    {
+        motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
+    }
+/*     if (Delection_Mode == true && CamGoalDetected == true && abs(ball_deg + yaw_BNO) < 80 && y < 80 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
         //MotorSpeed = speedmix;
@@ -72,7 +83,7 @@ void motors_Update()
     {
         motorsPidProcess(&headingPID, yaw_BNO, 0.0f );
         PIDk = 1;
-    } 
+    }  */
 /*     motorsPdMove();
        // motorsStop();
     } */
@@ -153,22 +164,25 @@ void motors_Update()
             {
                 if (Line_trace == true)
                 {
+                    tone(Buzzer_PIN, NOTE_C5, 150);
                     if (trace_X > 0)
                     {
-                        realmoveX = min(trace_X, moveDeg_X);
+                        realmoveX = min(trace_X, sin(deg_radian(ball_deg)) * 1.2);
                         Serial.print("Move_X-=");
                         Serial.print(realmoveX);
                     }
                     else
                     {
-                        realmoveX = max(trace_X, moveDeg_X);
+                        realmoveX = max(trace_X, sin(deg_radian(ball_deg)) * 1.2);
                         Serial.print("Move_X+=");
                         Serial.print(realmoveX);
                     }
                     Serial.print("MOVE=");
                     Serial.println(realmoveX);
-                    realmoveY = 1;
-                    MOVE_Deg2 = atan2(realmoveX, realmoveY); //なんか逆かも
+                    realmoveY = trace_Y;
+                    MOVE_Deg2 = atan2(trace_X, trace_Y); //なんか逆かも
+                    Serial.print("TRACEDEG=");
+                    Serial.println(radian_deg(MOVE_Deg2));
                     motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
                 }
                 else
@@ -216,14 +230,12 @@ void motors_Update()
         //motorsMove(moveDeg, MotorSpeed);
     }
     
-/*     motorsMove(IRv.deg , MotorSpeed);
-
+/* 
+    motorsMove(IRv.deg , MotorSpeed);
     Serial.print("realmovedegd=");
     Serial.println(realmovedegd);  */
     
     // Screen_Update();
     
-    
-
     // delay(10); // 制御周期安定化のためのウェイト */
 }

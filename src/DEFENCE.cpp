@@ -4,6 +4,10 @@ float IR_y = 0;
 float Line_x = 0;
 float Line_y = 0;
 
+float Line_Sx = 0;
+float Line_Sy = 0;
+
+
 void DEFENCE_setup()
 {
 
@@ -23,4 +27,6 @@ void DEFENCE_loop()
         ball_dis = IRv.dis;
     }
     
+    Line_Sx = Line_dis * cos(Angel.Linedegr);
+    Line_Sy = Line_dis * sin(Angel.Linedegr);
 }

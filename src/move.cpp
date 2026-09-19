@@ -2,6 +2,7 @@
 
 float moveDeg = 0;
 float ball_deg = 0;
+float mouth_ball_deg = 0;
 float ball_dis_integral = 0;
 float dis_error = 0;
 //float ball_dis = 0;
@@ -15,9 +16,14 @@ int Vex = 0;
 int Vey = 0;
 int x = 0;
 int y = 0; 
+int last_x = 0;
+int last_y = 0;
 int speedmix = 0;
 int Goal_movedeg = 0;
 float change_kd = 0.05f;
+
+int radius = 40; //半径
+float CircumCircle = 0.0f; //外接円
 
 PID ballPID(1.0f, 0.0f, 0.05f, 0.2f); // P , I , D , ローパス(0.01 ~ 1.0)
 
@@ -42,16 +48,18 @@ void move_loop()
     if (CamBallDetected == true)
     {
         ball_dis = CameraV.orange_dis;
+        ball_deg = CameraV.orange_deg;
     }
     else
     {
         ball_dis = IRv.dis;
+        ball_deg = IRv.deg;
     }
-    if(ball_dis < 80)
+    if(ball_dis < 100)
     {
         distanceDevide = true;
     }
-    else if(ball_dis > 100)
+    else if(ball_dis > 120)
     {
         distanceDevide = false;
     }
@@ -97,7 +105,7 @@ void move_loop()
     }
     else
     {
-        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 90);
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 85);
     }
 
     if (MoveSpeed >= 88)
@@ -110,9 +118,9 @@ void move_loop()
     }
     
     
-    if(IRv.detected == true && CamBallDetected == true  &&  distanceDevide == true)
+    if(IRv.detected == true  &&  distanceDevide == true)
     {
-        ball_deg = CameraV.orange_deg;
+        //ball_deg = CameraV.orange_deg;
         /* 
         if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 35 && ball_deg * GoalDeg >= 0) 
         {
@@ -120,21 +128,31 @@ void move_loop()
         } */
         x = CameraV.orange_dis * sin(deg_radian(ball_deg));
         y = CameraV.orange_dis * cos(deg_radian(ball_deg)); //25~27
+        int dt_x = x - last_x;
+        int dt_y = y - last_y;
+        
+        mouth_ball_deg = radian_deg(atan2(x , y - 18)); 
         Vex = -gz_LSM * x;
         Vey = gz_LSM * y;
         speedmix = sqrt(Vex * Vex + Vey * Vey);
         Goal_movedeg = atan2(Vex , Vey);
 
-        float mouth_ball_deg = radian_deg(atan2(x , y - 18));    //26は実測値
+        //float mouth_ball_deg = radian_deg(atan2(x , y - 18));    //26は実測値
 
-        ball_deg = mouth_ball_deg;
+       // ball_deg = mouth_ball_deg;
+
         Serial.print("x,y軸");
         Serial.print(x);
         Serial.print(", ");
         Serial.print(y);
         Serial.print(", ");
         Serial.print(mouth_ball_deg);
-        Serial.println("°");
+        Serial.println("°"); 
+
+        ball_dis = ball_dis * 1.2;
+        CircumCircle = radian_deg(asin(radius/ ball_dis));
+        Serial.print("Circum=");
+        Serial.println(CircumCircle);
         
 
         if(abs(x) < 15 && y > 0)
@@ -153,68 +171,44 @@ void move_loop()
             {
                 moveDeg = 0;
             }
-            else if(y < 60)
+            else if(abs(x) < 30 && y > 0 && y < 50)
             {
-                MoveSpeed = MoveSpeed * 75 / 90;
+                MoveSpeed = MoveSpeed * 70 / 85;
             }
         }
-
-        else if(x >= 15)
+        else if(y < 0)
         {
-/*             if(ball_deg < 30)
+            if(mouth_ball_deg > 0)
             {
-                moveDeg = ball_deg + 20;
-                //MotorSpeed = 70;
-            } 
-            else
-            {
-                moveDeg = ball_deg + 45;
-            } */
-            //moveDeg = ball_deg + 45;
-            
-            if(CameraV.orange_dis < 45)
-            {
-                moveDeg = ball_deg + 70;
-            }
-            else
-            {
-                moveDeg = ball_deg + 45;
-            }
-            
-        }
-        else if(x <= -15)
-        {
-            
-/*             if(ball_deg > -30)
-            {
-                moveDeg = ball_deg - 20;
-               // MotorSpeed = 70;
-            } 
-            else
-            {
-                moveDeg = ball_deg - 45;
                 
+                moveDeg = ball_deg + CircumCircle + 10;
+                
+            }
+            else
+            {
+                moveDeg = ball_deg - CircumCircle - 10;
+            }
+            //moveDeg = ball_deg + CircumCircle;
+
+            //moveDeg = (abs(ball_deg) + 30);
+/*             if(x > 0)
+            {
+                moveDeg = ball_deg + 30;
+            }
+            else
+            {
+                moveDeg = ball_deg - 30;
             } */
-            
-            if(CameraV.orange_dis < 45)
-            {
-                moveDeg = ball_deg - 70;
-            }
-            else
-            {
-                moveDeg = ball_deg - 45;
-            } 
-            //moveDeg = ball_deg - 45;
         }
-        else
+        else if(y > 0)
         {
-            if(x > 0)
+            if(x > 15)
             {
-                moveDeg = ball_deg + 45;
+                moveDeg = mouth_ball_deg + 45;
             }
-            else
+            else if(x < -15)
             {
-                moveDeg = ball_deg - 45;
+                moveDeg = mouth_ball_deg - 45;
             }
         }
         /* else if(ball_deg >= 8)
@@ -362,7 +356,7 @@ void move_loop()
         }
         } */
         
-
+        //moveDeg = DegRangeChange(moveDeg, 180);
         if(moveDeg > 180)
         {
             moveDeg = moveDeg - 360;
@@ -378,6 +372,8 @@ void move_loop()
     }
     
     last_ball_dis = ball_dis;
+    last_x = x;
+    last_y = y;
 }
 /* #include "move.h"
 

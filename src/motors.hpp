@@ -44,3 +44,4 @@ void motors_Setup();
 void motors_Update();
 
 extern float PIDk;
+extern int PIDpower;

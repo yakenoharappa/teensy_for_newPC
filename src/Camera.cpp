@@ -4,6 +4,12 @@ bool SettingGoal = 0;
 bool Delection_Mode = 0;
 bool DEForATTA = 1;
 
+/* 変更版
+bool SettingGoal = (EEPROM.read(0) >> 1) & 0b01;
+bool Delection_Mode = (EEPROM.read(0) >> 2) & 0b01;
+bool DEForATTA = (EEPROM.read(0)) & 0b01; 
+*/
+
 bool CamBallDetected = 0;
 bool CamGoalDetected = 0;
 int GoalDis = 0;
@@ -42,7 +48,7 @@ void Camera_update()
     else if(CameraV.orange_dis > 100)
     {
         distanceDevide = false;
-    } */
+    }  */
 
     if (uint16_t(CameraV.orange_deg) == 0xFF)
     {

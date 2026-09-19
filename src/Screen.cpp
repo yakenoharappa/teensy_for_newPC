@@ -1155,7 +1155,9 @@ void Screen_Update()
             if (EEPROM.read(0) != MotorSpeed)
             {
                 EEPROM.write(0, MotorSpeed);
+                EEPROM.update(0, MotorSpeed);
             } */
+           
         }
         break;
 
@@ -1348,6 +1350,7 @@ void Screen_Update()
             {
                 now = Status::Menu;
                 LeftRight = int(Menu_layout::Mode);
+                //EEPROM.update(0, (Delection_Mode << 2 | SettingGoal << 1 | DEForATTA));
             }
         }
 

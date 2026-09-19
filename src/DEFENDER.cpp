@@ -20,9 +20,9 @@ void DEFENDER_loop()
     
     IR_loop();
     //move_loop();
-    DEFENCE_loop();
-    
     LineMove_loop();
+
+    DEFENCE_loop();
     
     //Serial.print("CATCH=");
     //Serial.println(digitalRead(Catch_PIN));

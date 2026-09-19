@@ -6,6 +6,8 @@
 #include "readingSerial.h"
 #include "convert.h"
 
+#include <EEPROM.h>
+
 extern readingSerial Camera;
 
 class CameraData
@@ -28,6 +30,7 @@ void Camera_update();
 extern bool SettingGoal;
 extern bool Delection_Mode;
 extern bool DEForATTA;
+
 extern bool CamBallDetected;
 extern bool distanceDevide;
 extern int GoalDis;
