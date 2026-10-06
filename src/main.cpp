@@ -44,6 +44,8 @@ void loop()
 	/* Teensyフラッシュメモリアクセス
   		https://www.pjrc.com/teensy/td_libs_EEPROM.html */
 	
+	ATACKER_loop();
+	/* 
 	if (DEForATTA == 1)
 	{
 		ATACKER_loop();
@@ -51,7 +53,7 @@ void loop()
 	else
 	{
 		DEFENDER_loop();
-	}
+	} */
 	//Serial.print(digitalRead(ENTER_BUTTON));
 	//Serial.print(digital)
 	

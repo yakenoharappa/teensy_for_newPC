@@ -60,4 +60,5 @@ extern float Line_dis;
 
 extern bool Side_Need;
 extern bool Angel_Need;
-const int Goal_over_dis = 60;
+const int Goal_over_dis = 62;
+extern int position;

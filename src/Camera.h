@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+#include "Gyro/Gyro.h"
 #include "Serial.h"
 #include "readingSerial.h"
 #include "convert.h"
@@ -35,7 +36,13 @@ extern bool CamBallDetected;
 extern bool distanceDevide;
 extern int GoalDis;
 extern int GoalDeg;
+extern int Save_GoalDis;
+extern int Save_GoalDeg;
 
 extern bool CamGoalDetected;
+extern bool SaveGoalDetected;
 
+extern float GoalX;
 extern float GoalY;
+extern float SaveGoalY;
+extern float SaveGoalX;

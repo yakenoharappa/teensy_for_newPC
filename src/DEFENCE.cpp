@@ -6,6 +6,7 @@ float Line_y = 0;
 
 float Line_Sx = 0;
 float Line_Sy = 0;
+Line_States Robo_position = Line_States::NoDetected;
 
 
 void DEFENCE_setup()

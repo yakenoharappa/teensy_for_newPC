@@ -799,14 +799,16 @@ void Screen_Update()
         display.print("Line");
         display.setFont(NULL);
         display.setCursor(0, 20);
-        display.println("Ldeg=");
+        display.println("Ldeg, Mo=");
         if (LineNeed == true)
         {
-            display.println(DegRangeChange(radian_deg(Angel.Linedegr) , -180));
-            display.print("Mo=");
+            display.print(DegRangeChange(radian_deg(Angel.Linedegr) , -180));
+            display.print(", ");
             display.println(LineMoveDegd);
-            display.print("STATE");
-            display.println(Line_state);
+            display.print("S");
+            display.print(Line_state);
+            display.print(", ");
+            display.println(position);
             if (Angel_Need == true)
             {
                 display.drawLine(Line_en_offset + SCREEN_WIDTH/2, SCREEN_HEIGHT/2, Line_en_offset + SCREEN_WIDTH/2 + sin(deg_radian(LineMoveDegd)) * 30, SCREEN_HEIGHT/2 - cos(deg_radian(LineMoveDegd)) * 30, WHITE);

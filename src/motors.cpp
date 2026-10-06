@@ -43,7 +43,7 @@ void motors_Setup()
     // 不感帯の設定（0.5度以内のズレなら微調整を無視する）
     headingPID.setDeadband(0.5f);
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 1; i++) //i < 20
     {
         motorsStop();
         delay(100);
@@ -64,7 +64,7 @@ void motors_Update()
     } */
     //PIDpower = abs(GoalDeg) * 25 / 90;
     
-    if(Delection_Mode == true &&  CamGoalDetected == true && y < 60 && y > 0 && abs(ball_deg + yaw_BNO) < 80 && (CamBallDetected == true || IRv.detected == true))
+    if (Delection_Mode == true &&  CamGoalDetected == true  && y > 0 && abs(ball_deg + yaw_BNO) < 100 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
         PIDpower = abs(GoalDeg) * 25 / 75;
@@ -148,6 +148,7 @@ void motors_Update()
     
     if (LineNeed == true && Line_over == false)
     {
+        digitalWrite(LED4, HIGH);
         float LineMove_X = cos(deg_radian(LineMoveDegd));
         float LineMove_Y = sin(deg_radian(LineMoveDegd));
 
@@ -187,8 +188,9 @@ void motors_Update()
                 }
                 else
                 {
-                    MOVE_Deg2 = atan2(LineMove_Y * 1.2 + moveDeg_Y, LineMove_X * 1.2 + moveDeg_X);
+                    MOVE_Deg2 = atan2(LineMove_Y * 2 + moveDeg_Y, LineMove_X * 2 + moveDeg_X);
                     motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                    //motorsMove(LineMoveDegd, MotorSpeed);
                 }
             }
             else
@@ -199,22 +201,30 @@ void motors_Update()
         else
         {
             digitalWrite(LED2, HIGH);
-            if (IRv.detected == true || CamBallDetected == true)
+            if (abs(moveDeg - CameraV.court_deg) < 85 && (IRv.detected == true || CamBallDetected == true))
             {
                 motorsMove(moveDeg, MotorSpeed * 0.6);
             }
             else
             {
-                motorsStop();
+                MOVE_Deg2 = atan2(sin(deg_radian(CameraV.court_deg)) * 2 + moveDeg_Y, cos(deg_radian(CameraV.court_deg)) * 2 + moveDeg_X);  // + yaw_BNO
+                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed * 0.9);
             }
         }
     }
-    else if (GoalDis < Goal_over_dis && Line_over == false)
+    else if (GoalDis < Goal_over_dis && GoalDis > 1 && Line_over == false)
     {
+        digitalWrite(LED4, HIGH);
         motorsMove((180 - yaw_BNO), MotorSpeed);
+    }
+    else if (-SaveGoalY < 50 && abs(SaveGoalX) < 40 && -SaveGoalY > 1 && Line_over == false && SaveGoalDetected )
+    {
+        digitalWrite(LED4, HIGH);
+        motorsMove((yaw_BNO), MotorSpeed);
     }
     else if (IRv.detected == true || CamBallDetected == true)
     {
+        digitalWrite(LED4, LOW);
         if (Line_over == true && LineNeed == true)
         {
             motorsMove(moveDeg, MoveSpeed * 0.4);
@@ -226,6 +236,7 @@ void motors_Update()
     }
     else
     {
+        digitalWrite(LED4, LOW);
         motorsPdMove();
         //motorsMove(moveDeg, MotorSpeed);
     }

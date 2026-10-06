@@ -12,13 +12,20 @@ bool DEForATTA = (EEPROM.read(0)) & 0b01;
 
 bool CamBallDetected = 0;
 bool CamGoalDetected = 0;
+bool SaveGoalDetected = 0;
 int GoalDis = 0;
 int GoalDeg = 0;
+int Save_GoalDis = 0;
+int Save_GoalDeg = 0;
+
 bool distanceDevide = false;
 
 int old_GoalDeg[4] = {0};
 
 float GoalY = 0;
+float GoalX = 0;
+float SaveGoalY = 0;
+float SaveGoalX = 0;
 
 readingSerial Camera(cameraSerial, 0x55, 0xAA, 14);
                                             //　↑この数には、STARTとENDは含まない
@@ -63,11 +70,15 @@ void Camera_update()
     {
         GoalDis = CameraV.yellow_dis;
         GoalDeg = CameraV.yellow_deg;
+        Save_GoalDis = CameraV.blue_dis;
+        Save_GoalDeg = CameraV.blue_deg;
     }
     else
     {
         GoalDis = CameraV.blue_dis;
         GoalDeg = CameraV.blue_deg;
+        Save_GoalDis = CameraV.yellow_dis;
+        Save_GoalDeg = CameraV.yellow_deg;
     }
 
     int Look_GoalCheck = 0;
@@ -91,7 +102,20 @@ void Camera_update()
         CamGoalDetected = true;
     }
 
-    GoalY = cos(deg_radian(GoalDeg)) * GoalDis;
+    if (uint16_t(Save_GoalDeg) == 0xFF && uint16_t(Save_GoalDis) == 0xFF)
+    {
+        SaveGoalDetected = false;
+    }
+    else
+    {
+        SaveGoalDetected = true;
+    }
+    
+    GoalX = sin(deg_radian(GoalDeg + yaw_BNO)) * GoalDis;
+    GoalY = cos(deg_radian(GoalDeg + yaw_BNO)) * GoalDis;
+    SaveGoalX = sin(deg_radian(Save_GoalDeg + yaw_BNO)) * Save_GoalDis;
+    SaveGoalY = cos(deg_radian(Save_GoalDeg + yaw_BNO)) * Save_GoalDis;
+
     if (old_GoalDeg[0] != GoalDeg)
     {
         for (int i = 3; i > 0; i--)

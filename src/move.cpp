@@ -42,6 +42,11 @@ void move_setup()
 void move_loop()
 {
     //ballPID.setGains(1.0f, 0.0f, change_kd);
+/*     static uint32_t last_time = micros();
+    Serial.print("micros");
+    Serial.println(micros() - last_time);
+    last_time = micros(); */
+
     MoveSpeed = MotorSpeed;
 
     ball_deg = IRv.deg;
@@ -105,20 +110,19 @@ void move_loop()
     }
     else
     {
-        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 85);
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 90);
     }
 
     if (MoveSpeed >= 88)
     {
-        digitalWrite(LED4, HIGH);
+        //digitalWrite(LED4, HIGH);
     }
     else
     {
-        digitalWrite(LED4, LOW);
+        //digitalWrite(LED4, LOW);
     }
     
-    
-    if(IRv.detected == true  &&  distanceDevide == true)
+    if(IRv.detected == true )
     {
         //ball_deg = CameraV.orange_deg;
         /* 
@@ -126,22 +130,166 @@ void move_loop()
         {
             moveDeg = ball_deg;
         } */
+        x = ball_dis * sin(deg_radian(ball_deg));
+        y = ball_dis * cos(deg_radian(ball_deg)); 
+        /* 
         x = CameraV.orange_dis * sin(deg_radian(ball_deg));
-        y = CameraV.orange_dis * cos(deg_radian(ball_deg)); //25~27
+        y = CameraV.orange_dis * cos(deg_radian(ball_deg));  *///25~27
         int dt_x = x - last_x;
         int dt_y = y - last_y;
-        
-        mouth_ball_deg = radian_deg(atan2(x , y - 18)); 
+        float R_speed = sqrt(dt_x * dt_x + dt_y * dt_y) / 0.025;
+        Serial.println(R_speed);
+
+        mouth_ball_deg = radian_deg(atan2(x , y - 22)); 
+        /* 
         Vex = -gz_LSM * x;
         Vey = gz_LSM * y;
         speedmix = sqrt(Vex * Vex + Vey * Vey);
-        Goal_movedeg = atan2(Vex , Vey);
+        Goal_movedeg = atan2(Vex , Vey); */
 
         //float mouth_ball_deg = radian_deg(atan2(x , y - 18));    //26は実測値
 
        // ball_deg = mouth_ball_deg;
 
         Serial.print("x,y軸");
+        Serial.print(x);
+        Serial.print(", ");
+        Serial.print(y);
+        Serial.print(", ");
+        Serial.print(mouth_ball_deg);
+        Serial.println("°"); 
+
+        ball_dis = ball_dis * 1.2;
+        CircumCircle = radian_deg(asin(radius/ ball_dis));
+        Serial.print("Circum=");
+        Serial.println(CircumCircle);
+        
+
+        if(abs(x) < 15 && y > 5 && digitalRead(Catch_PIN) == false)
+        {
+            MoveSpeed = MoveSpeed * 0.70;
+        }
+
+        if(abs(x) < 15 && y > 0 )
+        {
+            change_kd = (15.0f - fabs(x))/ 50.0f;
+            if(change_kd < 0)
+            {
+                change_kd = 0.05f;
+            }
+            //moveDeg = ball_deg;
+            ballPID.setGains(1.0f, 0.0f, change_kd);
+            ballPID.process(x, 0.0f, true);
+            moveDeg = -ballPID.output();
+
+            if(digitalRead(Catch_PIN) == true)
+            {
+                moveDeg = 0;
+            }
+        }
+        else
+        {
+
+            if(ball_deg > 0)
+            {
+                moveDeg = ball_deg + (330 - ball_dis) / 5;
+            }
+            else if (ball_deg < 0)
+            {
+                moveDeg = ball_deg - (330 - ball_dis) / 5;
+            }
+        }
+
+/*         else if(y < 0)
+        {
+            if(mouth_ball_deg > 0)
+            {
+                if(R_speed < 120)
+                {
+                    moveDeg = ball_deg + CircumCircle + 40;
+                }
+                else
+                {
+                    moveDeg = ball_deg + CircumCircle + 30;
+                }
+            }
+            else
+            {
+                if(R_speed < 120)
+                {
+                    moveDeg = ball_deg - CircumCircle - 40;
+                }
+                else
+                {
+                    moveDeg = ball_deg - CircumCircle - 30;
+                }
+            } */
+            //moveDeg = ball_deg + CircumCircle;
+
+            //moveDeg = (abs(ball_deg) + 30);
+/*             if(x > 0)
+            {
+                moveDeg = ball_deg + 30;
+            }
+            else
+            {
+                moveDeg = ball_deg - 30;
+            } */
+        }
+/*         else if(y > 0)
+        {
+            if(x > 15)
+            {
+                moveDeg = mouth_ball_deg + 35;
+            }
+            else if(x < -15)
+            {
+                moveDeg = mouth_ball_deg - 35;
+            }
+        } */
+        
+        //moveDeg = DegRangeChange(moveDeg, 180);
+        if(moveDeg > 180)
+        {
+            moveDeg = moveDeg - 360;
+        }
+        else if(moveDeg < -180)
+        {
+            moveDeg = moveDeg + 360;
+        }
+/*     else
+    {
+        moveDeg = ball_deg;
+    } */
+
+
+    
+/*     if(IRv.detected == true  &&  distanceDevide == true)
+    {
+        //ball_deg = CameraV.orange_deg;
+        /* 
+        if (Delection_Mode == true && GoalDis < 80 && abs(ball_deg) < 35 && ball_deg * GoalDeg >= 0) 
+        {
+            moveDeg = ball_deg;
+        } */
+/*         x = CameraV.orange_dis * sin(deg_radian(ball_deg));
+        y = CameraV.orange_dis * cos(deg_radian(ball_deg)); //25~27
+        int dt_x = x - last_x;
+        int dt_y = y - last_y;
+        float R_speed = sqrt(dt_x * dt_x + dt_y * dt_y) / 0.025;
+        Serial.println(R_speed);
+        
+        mouth_ball_deg = radian_deg(atan2(x , y - 22));  */
+/*         Vex = -gz_LSM * x;
+        Vey = gz_LSM * y;
+        speedmix = sqrt(Vex * Vex + Vey * Vey);
+        Goal_movedeg = atan2(Vex , Vey); */
+
+        //float mouth_ball_deg = radian_deg(atan2(x , y - 18));    //26は実測値
+
+       // ball_deg = mouth_ball_deg;
+
+/*         Serial.print("x,y軸");
         Serial.print(x);
         Serial.print(", ");
         Serial.print(y);
@@ -173,21 +321,33 @@ void move_loop()
             }
             else if(abs(x) < 30 && y > 0 && y < 50)
             {
-                MoveSpeed = MoveSpeed * 70 / 85;
+                MoveSpeed = MoveSpeed * 75 / 85;
             }
         }
         else if(y < 0)
         {
             if(mouth_ball_deg > 0)
             {
-                
-                moveDeg = ball_deg + CircumCircle + 10;
-                
+                if(R_speed < 120)
+                {
+                    moveDeg = ball_deg + CircumCircle + 40;
+                }
+                else
+                {
+                    moveDeg = ball_deg + CircumCircle + 30;
+                }
             }
             else
             {
-                moveDeg = ball_deg - CircumCircle - 10;
-            }
+                if(R_speed < 120)
+                {
+                    moveDeg = ball_deg - CircumCircle - 40;
+                }
+                else
+                {
+                    moveDeg = ball_deg - CircumCircle - 30;
+                }
+            } */
             //moveDeg = ball_deg + CircumCircle;
 
             //moveDeg = (abs(ball_deg) + 30);
@@ -199,165 +359,11 @@ void move_loop()
             {
                 moveDeg = ball_deg - 30;
             } */
-        }
-        else if(y > 0)
-        {
-            if(x > 15)
-            {
-                moveDeg = mouth_ball_deg + 45;
-            }
-            else if(x < -15)
-            {
-                moveDeg = mouth_ball_deg - 45;
-            }
-        }
-        /* else if(ball_deg >= 8)
-        {
-        if(ball_deg < 20)
-        {
-            moveDeg = ball_deg + 5;
-            //MotorSpeed = 60;
-        }
-        else if(ball_deg < 30)
-        {
-            moveDeg = ball_deg + 10;
-        }
-        else if(ball_deg < 40)
-        {
-            moveDeg = ball_deg + 15;
-        }
-        else if(ball_deg < 50)
-        {
-            moveDeg = ball_deg + 40;
-        }
-        else if(ball_deg < 60)
-        {
-            moveDeg = ball_deg + 43;
-        }
-        else if(ball_deg < 70)
-        {
-            moveDeg = ball_deg + 47;
-        }
-        else if(ball_deg < 80)
-        {
-            moveDeg = ball_deg + 50;
-        }
-        else if(ball_deg < 90)
-        {
-            moveDeg = ball_deg + 53;
-        }
-        else if(ball_deg < 100)
-        {
-            moveDeg = ball_deg + 56;
-        }
-        else if(ball_deg < 110)
-        {
-            moveDeg = ball_deg + 60;
-        }
-        else if(ball_deg < 120)
-        {
-            moveDeg = ball_deg + 64;
-        }
-        else if(ball_deg < 130)
-        {
-            moveDeg = ball_deg + 67;
-        }
-        else if(ball_deg < 140)
-        {
-            moveDeg = ball_deg + 70;
-        }
-        else if(ball_deg < 150)
-        {
-            moveDeg = ball_deg + 70;
-        }
-        else if(ball_deg < 160)
-        {
-            moveDeg = ball_deg + 73;
-        }
-        else if(ball_deg < 170)
-        {
-            moveDeg = ball_deg + 76;
-        }
-        else if(ball_deg <= 180)
-        {
-            moveDeg = ball_deg + 80;
-        }
-        }
-        else if(ball_deg <= -8)
-        {
-        if(ball_deg > -20)
-        {
-            moveDeg = ball_deg - 5;
-            //MotorSpeed = 60;
-        }
-        else if(ball_deg > -30)
-        {
-            moveDeg = ball_deg - 10;
-        }
-        else if(ball_deg > -40)
-        {
-            moveDeg = ball_deg - 15;
-        }
-        else if(ball_deg > -50)
-        {
-            moveDeg = ball_deg - 40;
-        }
-        else if(ball_deg > -60)
-        {
-            moveDeg = ball_deg - 43;
-        }
-        else if(ball_deg > -70)
-        {
-            moveDeg = ball_deg - 47;
-        }
-        else if(ball_deg > -80)
-        {
-            moveDeg = ball_deg - 50;
-        }
-        else if(ball_deg > -90)
-        {
-            moveDeg = ball_deg - 53;
-        }
-        else if(ball_deg > -100)
-        {
-            moveDeg = ball_deg - 56;
-        }
-        else if(ball_deg > -110)
-        {
-            moveDeg = ball_deg - 60;
-        }
-        else if(ball_deg > -120)
-        {
-            moveDeg = ball_deg - 64;
-        }
-        else if(ball_deg > -130)
-        {
-            moveDeg = ball_deg - 67;
-        }
-        else if(ball_deg > -140)
-        {
-            moveDeg = ball_deg - 70;
-        }
-        else if(ball_deg > -150)
-        {
-            moveDeg = ball_deg - 70;
-        }
-        else if(ball_deg > -160)
-        {
-            moveDeg = ball_deg - 73;
-        }
-        else if(ball_deg > -170)
-        {
-            moveDeg = ball_deg - 76;
-        }
-        else if(ball_deg >= -180)
-        {
-            moveDeg = ball_deg - 80;
-        }
-        } */
+//        }
+
         
         //moveDeg = DegRangeChange(moveDeg, 180);
-        if(moveDeg > 180)
+/*       if(moveDeg > 180)
         {
             moveDeg = moveDeg - 360;
         }
@@ -369,11 +375,11 @@ void move_loop()
     else
     {
         moveDeg = ball_deg;
-    }
+    } */
     
     last_ball_dis = ball_dis;
-    last_x = x;
-    last_y = y;
+/*     last_x = x;
+    last_y = y; */
 }
 /* #include "move.h"
 

@@ -15,10 +15,11 @@ void readingSerial::readData()
     while (Serials[SerialNumber]->available() >= (amountData + 2) )
     {
         //Serial.println("IN1Loop");
-        while ( Serials[SerialNumber]->available() >= (readingSerial::amountData + 2) * 1  &&  Serials[SerialNumber]->peek() != readingSerial::Start )
+        if ( Serials[SerialNumber]->peek() != readingSerial::Start )
         {
             //Serial.println("in2loop");
             Serials[SerialNumber]->read();
+            continue;
         }
         
         readingSerial::checkV[0] = Serials[SerialNumber]->read();

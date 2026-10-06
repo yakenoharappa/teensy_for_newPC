@@ -50,7 +50,7 @@ void ATACKER_loop()
     if (digitalRead(TOGGLE_PIN) == true)
     {
         motors_Update();
-        Screen_Update();
+        //Screen_Update();
         //first_move = 1;
         //ClearScreen(); //！！！！本来はこっちだよ（全国大会）！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         Kicker();
