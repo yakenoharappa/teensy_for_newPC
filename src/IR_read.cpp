@@ -17,7 +17,4 @@ void IR_loop()
     {
         IRv.detected = true;
     }
-    
-    //Serial.print("Serial7IR:");
-    //Serial.println(Serial7.read());
 }

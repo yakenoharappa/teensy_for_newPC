@@ -164,7 +164,7 @@ void BNO_update() {
     }
     else
     {
-        if ( millis() - last_OKtime > 1000 )
+        if ( (millis() - last_OKtime) > 1000 )
         {
             new_check = new_yaw;
         }
@@ -181,15 +181,16 @@ void BNO_update() {
 //boolとは、０か１か（true or false）を表す変数。intより更に処理が簡潔なので、処理速度の向上が見込まれる。
 
 
-
-
 //リセットボタン
-    if (Button == 0){
+    if (Button == 0)
+    {
         Reset = yaw_BNO;
         //Serial.print("Button");
         Serial.print(Button);
         //digitalWrite(LED3, LOW);
-    }else{
+    }
+    else
+    {
         //digitalWrite(LED3, HIGH);
     }
     yaw_BNO = yaw_BNO - Reset;
@@ -199,24 +200,10 @@ void BNO_update() {
     //data1.main = uint16_t(intia(yaw_BNO));
 //DAC変換
     yaw_BNO = angle(yaw_BNO);
-    int dacvalue = (yaw_BNO + 180) * 1023 / 360;
+    //int dacvalue = (yaw_BNO + 180) * 1023 / 360;
 
 //LED
-/*     if ( fabs(yaw_BNO) < 10 )
-    {
-        digitalWrite(LED_BUILTIN, LOW);
-        digitalWrite(LED2, HIGH);
-    }
-    else if ( fabs(yaw_BNO) > 170 )
-    {
-        digitalWrite(LED_BUILTIN, HIGH);
-        digitalWrite(LED2, LOW);
-    }
-    else
-    {
-        digitalWrite(LED_BUILTIN, HIGH);
-        digitalWrite(LED2, HIGH);
-    } */
+
 
 //DAC転送
     //analogWrite(DAC_PIN, dacvalue); //TJ3Bcoreに転送する

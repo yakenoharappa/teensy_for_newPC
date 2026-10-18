@@ -12,7 +12,7 @@ void LineMove_setup()
 void LineMove_loop()
 {
     LineRead_update();
-    float linemovedegr2 = DegRangeChange(Angel.Linedegr, -180);
+    float linemovedegr2 = DegRangeChange(radian_deg(Angel.Linedegr));
 /* 
     if ((linemovedegr2 > 60 && linemovedegr2 < 120) || (linemovedegr2 > -120 && linemovedegr2 < -60) ) //よこ
     {
@@ -36,7 +36,7 @@ void LineMove_loop()
     } */
 
     
-    LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
+    LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180);
     
     //LineMoveDegd = DegRangeChange(radian_deg(Angel.Linedegr) + 180, 180);
 

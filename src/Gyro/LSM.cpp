@@ -277,15 +277,7 @@ void LSM_update()
     // シリアル表示
     //------------------------
 
-/*     Serial.print("Theta: ");
-    Serial.print(theta);
-
-    Serial.print("  Gz: ");
-    Serial.print(gz); */
-
-/* 
-    Serial.print("  dt_LSM:");
-    Serial.println(dt_LSM, 6); */
+/*     */
 
     #ifdef DEBUG_LSM
         Serial.print("ax:");
@@ -302,15 +294,23 @@ void LSM_update()
 
         Serial.print(", vy:");
         Serial.print(vy);
-
-        Serial.print(", Theta:");
-        Serial.println(theta);
-
-/*         Serial.print("xx:");
+    
+        Serial.print("xx:");
         Serial.print(xx);
 
         Serial.print(", xy:");
-        Serial.println(xy); */
+        Serial.println(xy); 
+
+        Serial.print(", Theta:");
+        Serial.println(theta);
+        Serial.print("Theta: ");
+        Serial.print(theta);
+
+        Serial.print("  Gz: ");
+        Serial.print(gz); 
+
+        Serial.print("  dt_LSM:");
+        Serial.println(dt_LSM, 6); 
     #endif
     gz_LSM = gz;
 

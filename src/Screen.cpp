@@ -594,9 +594,10 @@ void Screen_Update()
 
 
     case Status::Gyro:
+        /* 
         Serial.print(senga_X2);
         Serial.print(", ");
-        Serial.println(senga_Y2);
+        Serial.println(senga_Y2); */
         
         //writeCircle(20, 0, 30);
         //display.drawLine(SCREEN_WIDTH/2 + 20, SCREEN_HEIGHT/2 , (SCREEN_WIDTH/2 + senga_X2 + 20), (SCREEN_HEIGHT/2 - senga_Y2), WHITE);
@@ -802,7 +803,7 @@ void Screen_Update()
         display.println("Ldeg, Mo=");
         if (LineNeed == true)
         {
-            display.print(DegRangeChange(radian_deg(Angel.Linedegr) , -180));
+            display.print(DegRangeChange(radian_deg(Angel.Linedegr)));
             display.print(", ");
             display.println(LineMoveDegd);
             display.print("S");
@@ -822,7 +823,7 @@ void Screen_Update()
         display.print("F=");
         display.println(radian_deg(first_deg));
         display.print("Ca-=");
-        display.println(DegRangeChange(CameraV.court_deg - 180, -180));
+        display.println(DegRangeChange(CameraV.court_deg - 180));
         
 
         //円を描く

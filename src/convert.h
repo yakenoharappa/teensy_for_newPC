@@ -12,6 +12,7 @@ int radian_deg(float radian);
 int changedeg(int value, int change_range);
 
 //角度範囲変換
+int DegRangeChange(int before);
 int DegRangeChange(int before, int which);
 
 //8bit→16bit(Serial関係)

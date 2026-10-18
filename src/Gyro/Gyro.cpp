@@ -7,7 +7,7 @@ int usingGyro = 0;
 //#define Gyro_DEBUG
 #define BNO 0
 #define MIX 1
-#define LSM 2
+//#define LSM 2
 
 /* void setup()
 {
@@ -32,6 +32,7 @@ void Gyro_update()
 {
     BNO_update();
     //LSM_update();
+/* 
     if ( LSM_STATUS == true && usingGyro == MIX )
     {
         if ( abs(gz_LSM) > 5.5 && abs(pastdeg - yaw_BNO) <= 0.5 )
@@ -61,8 +62,37 @@ void Gyro_update()
     else 
     {
         deg_data = theta;
-    }
-        
+    } */
+    #ifdef BNO
+        #ifdef LSM
+            if ( LSM_STATUS == true && usingGyro == MIX )
+            {
+                if ( abs(gz_LSM) > 5.5 && abs(pastdeg - yaw_BNO) <= 0.5 )
+                {
+                    deg_data = theta;
+                    
+                }
+                else if ( abs(gz_LSM) > 5.5 &&  abs(pastdeg - yaw_BNO) > 0.5 )
+                {
+                    deg_data = yaw_BNO;
+                    theta += (yaw_BNO - theta);
+                }
+                else if ( abs(gz_LSM) < 5.5 &&  abs(pastdeg - yaw_BNO) < 1 )
+                {
+                    //deg_data = pastdeg += gz_LSM * dt_LSM;
+                    deg_data = yaw_BNO;
+                }
+                else
+                {
+                    deg_data = yaw_BNO;
+                }
+            }
+        #else
+            deg_data = yaw_BNO;
+        #endif
+    #else
+        deg_data = theta;
+    #endif
 
     #ifdef Gyro_DEBUG
         Serial.print("BNO:");

@@ -24,23 +24,7 @@ void DEFENDER_loop()
 
     DEFENCE_loop();
     
-    //Serial.print("CATCH=");
-    //Serial.println(digitalRead(Catch_PIN));
-/* 
-    Serial.print("SIDE");
-    Serial.print(Angel.Left);
-    Serial.print(", ");
-    Serial.print(Angel.Back);
-    Serial.print(", ");
-    Serial.print(Angel.Right);
-    Serial.println(", "); */
     
-    /* 
-    while (Serial2.available())
-    {
-        Serial.print("LINEDATA=");
-        Serial.println(Serial2.read(), 2);
-    } */
     
     if (digitalRead(TOGGLE_PIN) == true)
     {
@@ -56,7 +40,5 @@ void DEFENDER_loop()
         Screen_Update();
         Kicker_end();
     }
-    Serial.print("MoveSpeed=");
-    Serial.println(MoveSpeed);
     //delay(100);
 }

@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include "PINOUTs.h"
 
-#define DEBUG
+//#define DEBUG
 
 //const int GYRO_RESET = 1;
 

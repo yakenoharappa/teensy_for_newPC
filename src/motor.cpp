@@ -83,7 +83,7 @@ void motorsDirectMove(int value_1ch, int value_2ch, int value_3ch, int value_4ch
     _dsr.move(value_1ch, value_2ch, value_3ch, value_4ch);
 }
 
-#define PD_MAX 80.0f
+#define PD_MAX 95.0f
 #define PD_MOVING_MAX 30.0f
 float motor_bias[4] = {1.00 , 1.00 , 1.00 , 1.00};  //左下 左前 右下 右上
 void motorsMove(float deg, float power)

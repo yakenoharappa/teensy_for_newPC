@@ -6,12 +6,15 @@ float mouth_ball_deg = 0;
 float ball_dis_integral = 0;
 float dis_error = 0;
 //float ball_dis = 0;
+int deg_speed = 0;
 int last_ball_dis = 0;
 float i_limit_dis = 1.0f;
 int MoveSpeed = MotorSpeed;
 int ball_dis = 0;
 float dt_dis = 0;
 unsigned long dis_time = 0;
+unsigned long last_dtime = 0;
+unsigned long last_yawTime = 0;
 int Vex = 0;
 int Vey = 0;
 int x = 0;
@@ -21,6 +24,10 @@ int last_y = 0;
 int speedmix = 0;
 int Goal_movedeg = 0;
 float change_kd = 0.05f;
+int dt_x = 0;
+int dt_y = 0;
+int dt_yaw = 0;
+int last_yaw = 0;
 
 int radius = 40; //半径
 float CircumCircle = 0.0f; //外接円
@@ -42,10 +49,10 @@ void move_setup()
 void move_loop()
 {
     //ballPID.setGains(1.0f, 0.0f, change_kd);
-/*     static uint32_t last_time = micros();
+    static uint32_t last_time = micros();
     Serial.print("micros");
     Serial.println(micros() - last_time);
-    last_time = micros(); */
+    last_time = micros();
 
     MoveSpeed = MotorSpeed;
 
@@ -85,16 +92,17 @@ void move_loop()
         dt_dis = 0;
     } */
 
-    dt_dis = (millis() - dis_time) * 0.1;
+    dt_dis = (millis() - dis_time) * 0.6;
     
     if (fabsf(dis_error) < 0.000005) //_deadband仮
     {
         dis_error = 0.0f;
     }
 
-    ball_dis_integral += dis_error * dis_time; // 誤差に時間をかけて積み上げる
+    ball_dis_integral += dis_error * dis_time * 0.1f; // 誤差に時間をかけて積み上げる
     // 積分が溜まりすぎると、目標を超えても止まらなくなるので制限をかける
     //ball_dis_integral = constrain(ball_dis_integral, -i_limit_dis, i_limit_dis);
+    /* 
     Serial.print("lasdis");
     Serial.print(last_ball_dis);
     Serial.print("Error");
@@ -102,15 +110,15 @@ void move_loop()
     Serial.print(", INTE");
     Serial.print(ball_dis_integral);
     Serial.print(", dt_dis");
-    Serial.println(dt_dis);
-    if (digitalRead (Catch_PIN) == 1 || IRv.detected == false)
+    Serial.println(dt_dis); */
+    if (digitalRead (Catch_PIN) == 1 || IRv.detected == false || LineNeed == true)
     {
         ball_dis_integral = 0;
         MoveSpeed = MotorSpeed;
     }
     else
     {
-        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 90);
+        MoveSpeed = constrain(MotorSpeed + ball_dis_integral, MotorSpeed, 100);
     }
 
     if (MoveSpeed >= 88)
@@ -135,12 +143,35 @@ void move_loop()
         /* 
         x = CameraV.orange_dis * sin(deg_radian(ball_deg));
         y = CameraV.orange_dis * cos(deg_radian(ball_deg));  *///25~27
-        int dt_x = x - last_x;
-        int dt_y = y - last_y;
-        float R_speed = sqrt(dt_x * dt_x + dt_y * dt_y) / 0.025;
-        Serial.println(R_speed);
+/*         int dt_x = x - last_x;
+        int dt_y = y - last_y; */
+        if((millis() - last_yawTime) > 100)
+        {
+            dt_yaw = yaw_BNO - last_yaw;
+            last_yaw = yaw_BNO;
+            last_yawTime = millis();
+            deg_speed = dt_yaw / 0.10f;
+            Serial.print("deg_speed = ");
+            Serial.print(deg_speed); //abs(deg_speed)が20より大きかったら切り替える
+        }
+        
+        if((micros() - last_dtime) > 200000)
+        {
+            dt_x = x - last_x;
+            dt_y = y - last_y;
+            last_x = x;
+            last_y = y;
+            Serial.print("dt_x ");
+            Serial.println(dt_x);
 
-        mouth_ball_deg = radian_deg(atan2(x , y - 22)); 
+            last_dtime = micros();
+        }
+
+        float R_speed = sqrt(dt_x * dt_x + dt_y * dt_y) / 0.025;
+        Serial.print("dt_x ");
+        Serial.println(dt_x);
+
+        mouth_ball_deg = radian_deg(atan2(x , y - 20)); 
         /* 
         Vex = -gz_LSM * x;
         Vey = gz_LSM * y;
@@ -151,26 +182,35 @@ void move_loop()
 
        // ball_deg = mouth_ball_deg;
 
+/* 
         Serial.print("x,y軸");
         Serial.print(x);
         Serial.print(", ");
         Serial.print(y);
         Serial.print(", ");
         Serial.print(mouth_ball_deg);
-        Serial.println("°"); 
+        Serial.println("°");  */
 
-        ball_dis = ball_dis * 1.2;
+        //ball_dis = ball_dis * 1.2;
         CircumCircle = radian_deg(asin(radius/ ball_dis));
-        Serial.print("Circum=");
-        Serial.println(CircumCircle);
+        //Serial.print("Circum=");
+        //Serial.println(CircumCircle);
         
 
-        if(abs(x) < 15 && y > 5 && digitalRead(Catch_PIN) == false)
+        if(abs(x) < 9 && y > 8 && digitalRead(Catch_PIN) == false)
         {
-            MoveSpeed = MoveSpeed * 0.70;
+            if(abs(dt_x) < 50)
+            {
+                MoveSpeed = MoveSpeed * 0.7;
+            }
+            else
+            {
+                MoveSpeed = MoveSpeed * 0.3;
+            }
         }
 
-        if(abs(x) < 15 && y > 0 )
+
+        if(abs(x) < 12 && y > 0 )
         {
             change_kd = (15.0f - fabs(x))/ 50.0f;
             if(change_kd < 0)
@@ -198,7 +238,20 @@ void move_loop()
             {
                 moveDeg = ball_deg - (330 - ball_dis) / 5;
             }
+
+            if(deg_speed > 20)
+            {
+                moveDeg = moveDeg + 10;
+            }
+            else if(deg_speed < -20)
+            {
+                moveDeg = moveDeg -10;
+            }
         }
+
+/*         last_x = x;
+        last_y = y; */
+
 
 /*         else if(y < 0)
         {

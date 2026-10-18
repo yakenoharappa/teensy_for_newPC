@@ -16,3 +16,5 @@ void DEFENCE_setup();
 void DEFENCE_loop();
 
 //extern int MoveSpeed;
+
+enum DefenderState{ReturnGoal, SaveGoal, ATACK};

@@ -46,3 +46,4 @@ extern float GoalX;
 extern float GoalY;
 extern float SaveGoalY;
 extern float SaveGoalX;
+extern float SideX;

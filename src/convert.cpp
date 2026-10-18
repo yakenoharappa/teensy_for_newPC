@@ -14,7 +14,8 @@ int radian_deg(float radian){
 }
 
 //基準方向変換
-int changedeg(int value, int change_range){
+int changedeg(int value, int change_range)
+{
     value += change_range;
     while (value > 180)
     {
@@ -28,30 +29,32 @@ int changedeg(int value, int change_range){
 }
 
 //角度範囲変換
-int DegRangeChange(int before, int which){
-    if (which == 360)
+int DegRangeChange(int before)
+{
+    before %= 360;
+    if (before > 180)
     {
-        while (before > 360)
-        {
-            before -= 360;
-        }
-        while (before < 0)
-        {
-            before += 360;
-        }
+        before -= 360;
     }
-    else
+    else if (before < -180)
     {
-        while (before > 180)
-        {
-            before -= 360;
-        }
-        while (before < -180)
-        {
-            before += 360;
-        }
+        before += 360;
     }
     return before;
+}
+
+int DegRangeChange(int before, int which)
+{
+    if (which == 360)
+    {
+        before %= 360;
+        if (before < 0)
+        {
+            before += 360;
+        }
+        return before;
+    }
+    return DegRangeChange(before);
 }
 
 

@@ -64,7 +64,7 @@ void motors_Update()
     } */
     //PIDpower = abs(GoalDeg) * 25 / 90;
     
-    if (Delection_Mode == true &&  CamGoalDetected == true  && y > 0 && abs(ball_deg + yaw_BNO) < 100 && (CamBallDetected == true || IRv.detected == true))
+    if (Delection_Mode == true &&  CamGoalDetected == true  && y > 0 && abs(ball_deg + yaw_BNO) < 120 && (CamBallDetected == true || IRv.detected == true))
     {
         motorsPidProcess(&headingPID, -GoalDeg, 0.0f);
         PIDpower = abs(GoalDeg) * 25 / 75;
@@ -109,6 +109,7 @@ void motors_Update()
     
     float realmoveX = 0;
     float realmoveY = 0;
+/* realmovedegd（ライン＋回り込み角度）
     float realmovedegd = 0;
 
     if (LineNeed == true)
@@ -124,7 +125,8 @@ void motors_Update()
         realmoveY += cos(moveDeg) + cos(LineMoveDegd);
     }
 
-    realmovedegd = radian_deg(atan2(realmoveY, realmoveX)); 
+    realmovedegd = radian_deg(atan2(realmoveY, realmoveX));  */
+
 
 /*     if (IRv.deg == 0b1111111111 && LineNeed == false)
     {
@@ -145,17 +147,27 @@ void motors_Update()
         motorsMove(IRv.deg, MotorSpeed);
         //motorsMove(moveDeg, MotorSpeed);
     } */
-    
-    if (LineNeed == true && Line_over == false)
+    if (CamGoalDetected && GoalY < 62 && GoalY > 1 && abs(GoalX) < 40 && Line_over == false)
+    {
+        digitalWrite(LED4, HIGH);
+        motorsMove((180 - yaw_BNO), MotorSpeed);
+    }
+    else if (SaveGoalDetected == true && -SaveGoalY > 0 && -SaveGoalY < 55 && abs(SaveGoalX) < 40 && abs(DegRangeChange(CameraV.court_deg + yaw_BNO)) < 45) //-SaveGoalY < 50 && abs(SaveGoalX) < 40 &&
+    {
+        digitalWrite(LED4, HIGH);
+        motorsMove(-(yaw_BNO), MotorSpeed);
+    }
+    else if (LineNeed == true && Line_over == false)
     {
         digitalWrite(LED4, HIGH);
         float LineMove_X = cos(deg_radian(LineMoveDegd));
         float LineMove_Y = sin(deg_radian(LineMoveDegd));
 
-        float moveDeg_X = cos(deg_radian(moveDeg));
-        float moveDeg_Y = sin(deg_radian(moveDeg));
+        float moveDeg_X = cos(deg_radian(ball_deg));
+        float moveDeg_Y = sin(deg_radian(ball_deg));
 
         float MOVE_Deg2 = 0;
+        float LineSpeed = constrain(1 - Line_dis, 0.6, 1);
         
         if (Angel_Need == true)
         {
@@ -169,73 +181,73 @@ void motors_Update()
                     if (trace_X > 0)
                     {
                         realmoveX = min(trace_X, sin(deg_radian(ball_deg)) * 1.2);
-                        Serial.print("Move_X-=");
-                        Serial.print(realmoveX);
                     }
                     else
                     {
                         realmoveX = max(trace_X, sin(deg_radian(ball_deg)) * 1.2);
-                        Serial.print("Move_X+=");
-                        Serial.print(realmoveX);
                     }
-                    Serial.print("MOVE=");
-                    Serial.println(realmoveX);
                     realmoveY = trace_Y;
                     MOVE_Deg2 = atan2(trace_X, trace_Y); //なんか逆かも
-                    Serial.print("TRACEDEG=");
-                    Serial.println(radian_deg(MOVE_Deg2));
-                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed * LineSpeed);
+                    Serial.print("Tmix");
+                    Serial.print(radian_deg(MOVE_Deg2));
+                    Serial.print("motomoto=");
+                    Serial.println(LineMoveDegd);
                 }
                 else
                 {
-                    MOVE_Deg2 = atan2(LineMove_Y * 2 + moveDeg_Y, LineMove_X * 2 + moveDeg_X);
-                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed);
+                    MOVE_Deg2 = atan2(LineMove_Y * 1.2 + moveDeg_Y, LineMove_X * 1.2 + moveDeg_X);
+                    motorsMove(radian_deg(MOVE_Deg2), MotorSpeed * LineSpeed);
+                    /* 
+                    Serial.print("Lmix");
+                    Serial.print(radian_deg(MOVE_Deg2));
+                    Serial.print("motomoto=");
+                    Serial.println(LineMoveDegd); */
                     //motorsMove(LineMoveDegd, MotorSpeed);
                 }
             }
             else
             {
-                motorsMove(LineMoveDegd, MotorSpeed);
+                motorsMove(LineMoveDegd, MotorSpeed * LineSpeed);
             } 
         }
-        else
+        else //if (Goalout == false)
         {
-            digitalWrite(LED2, HIGH);
-            if (abs(moveDeg - CameraV.court_deg) < 85 && (IRv.detected == true || CamBallDetected == true))
+            digitalWrite(LED2, LOW);
+            if (abs(DegRangeChange((moveDeg)) - DegRangeChange(CameraV.court_deg)) < 90 && (IRv.detected == true || CamBallDetected == true))
             {
-                motorsMove(moveDeg, MotorSpeed * 0.6);
+                motorsMove(moveDeg, (150 - MoveSpeed) * 0.5);
             }
             else
             {
-                MOVE_Deg2 = atan2(sin(deg_radian(CameraV.court_deg)) * 2 + moveDeg_Y, cos(deg_radian(CameraV.court_deg)) * 2 + moveDeg_X);  // + yaw_BNO
-                motorsMove(radian_deg(MOVE_Deg2), MotorSpeed * 0.9);
+                MOVE_Deg2 = atan2(sin(deg_radian(CameraV.court_deg)) * 1.2 + moveDeg_Y, cos(deg_radian(CameraV.court_deg)) * 1.2 + moveDeg_X);  // + yaw_BNO
+                motorsMove(radian_deg(MOVE_Deg2), (150 - MoveSpeed) * 0.6);
+                /* 
+                Serial.print("Smix");
+                Serial.print(radian_deg(MOVE_Deg2));
+                Serial.print("move=");
+                Serial.println(moveDeg);  */
             }
         }
     }
-    else if (GoalDis < Goal_over_dis && GoalDis > 1 && Line_over == false)
-    {
-        digitalWrite(LED4, HIGH);
-        motorsMove((180 - yaw_BNO), MotorSpeed);
-    }
-    else if (-SaveGoalY < 50 && abs(SaveGoalX) < 40 && -SaveGoalY > 1 && Line_over == false && SaveGoalDetected )
-    {
-        digitalWrite(LED4, HIGH);
-        motorsMove((yaw_BNO), MotorSpeed);
-    }
+    //       CamGoalDetected == true && GoalY > 0 && GoalY < Goal_over_dis && abs(GoalX) < 40 && abs(DegRangeChange(CameraV.court_deg + yaw_BNO, 180)) > 120
     else if (IRv.detected == true || CamBallDetected == true)
     {
         digitalWrite(LED4, LOW);
         if (Line_over == true && LineNeed == true)
         {
-            motorsMove(moveDeg, MoveSpeed * 0.4);
+            digitalWrite(LED2, HIGH);
+            motorsMove(ball_deg, MotorSpeed * 0.5);
         }
         else
         {
+            digitalWrite(LED2, LOW);
             motorsMove(moveDeg, MoveSpeed);
         }
     }
     else
     {
+        digitalWrite(LED2, LOW);
         digitalWrite(LED4, LOW);
         motorsPdMove();
         //motorsMove(moveDeg, MotorSpeed);

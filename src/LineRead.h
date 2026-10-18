@@ -60,5 +60,8 @@ extern float Line_dis;
 
 extern bool Side_Need;
 extern bool Angel_Need;
-const int Goal_over_dis = 62;
+const int Goal_over_dis = 64;
 extern int position;
+
+extern float to_Linedegr;
+extern bool Goalout;
